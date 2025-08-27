@@ -68,7 +68,7 @@ export function Dashboard({
               />
         </div>
 
-        <div className="space-y-6">
+        <div className="space-y-6 lg:col-start-3">
           <Card>
             <CardHeader>
               <CardTitle>Calendar</CardTitle>
