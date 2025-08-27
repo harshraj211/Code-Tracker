@@ -5,6 +5,7 @@ import type { Subject, Task } from '@/lib/types';
 import { format } from 'date-fns';
 import { useLocalStorage } from '@/hooks/use-local-storage';
 import { CodeTracker } from './CodeTracker';
+import { useToast } from '@/hooks/use-toast';
 
 const initialSubjects: Subject[] = [
   // Web Development
@@ -372,29 +373,66 @@ export function CodeTrackerClient() {
   const [isClient, setIsClient] = useState(false);
   const [subjects, setSubjects] = useLocalStorage<Subject[]>('subjects', initialSubjects);
   const [tasks, setTasks] = useLocalStorage<Task[]>('tasks', []);
-  const [activeSubjectId, setActiveSubjectId] = useLocalStorage<string | null>('activeSubjectId', null);
+  const [activeSubjectId, setActiveSubjectId] = useLocalStorage<string | null>('activeSubjectId', 'html');
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
+  const { toast } = useToast();
   
   useEffect(() => {
     setIsClient(true);
+    const hasBeenOnboarded = localStorage.getItem('onboarded');
+    if (!hasBeenOnboarded) {
+      setActiveSubjectId(null);
+      localStorage.setItem('onboarded', 'true');
+    }
   }, []);
 
   const activeSubject = useMemo(() => subjects.find(s => s.id === activeSubjectId), [subjects, activeSubjectId]);
   
   const addSubject = (name: string) => {
+    const trimmedName = name.trim();
+    if (!trimmedName) {
+      toast({
+        title: 'Error',
+        description: "Subject name can't be empty.",
+        variant: 'destructive',
+      });
+      return;
+    }
+    if (subjects.some(s => s.name.toLowerCase() === trimmedName.toLowerCase())) {
+        toast({
+            title: 'Error',
+            description: 'A subject with this name already exists.',
+            variant: 'destructive',
+        });
+        return;
+    }
+
     const newSubject: Subject = {
       id: crypto.randomUUID(),
-      name,
+      name: trimmedName,
       topics: [],
     };
     setSubjects(prevSubjects => [...prevSubjects, newSubject]);
     setActiveSubjectId(newSubject.id);
+    toast({
+        title: 'Success',
+        description: `Subject "${trimmedName}" added successfully.`,
+    });
   };
   
   const addTask = (text: string, subjectId: string, topicId?: string) => {
+    const trimmedText = text.trim();
+    if (!trimmedText) {
+        toast({
+            title: 'Error',
+            description: "Task can't be empty.",
+            variant: 'destructive',
+        });
+        return;
+    }
     const newTask: Task = {
       id: crypto.randomUUID(),
-      text,
+      text: trimmedText,
       completed: false,
       date: format(selectedDate, 'yyyy-MM-dd'),
       subjectId,
@@ -416,10 +454,31 @@ export function CodeTrackerClient() {
   };
   
   const addTopic = (subjectId: string, topicName: string) => {
+    const trimmedName = topicName.trim();
+    if (!trimmedName) {
+        toast({
+            title: 'Error',
+            description: "Topic name can't be empty.",
+            variant: 'destructive',
+        });
+        return;
+    }
     setSubjects(prevSubjects =>
         prevSubjects.map(subject => {
             if(subject.id === subjectId && !subject.isCategory) {
-                const newTopic = { id: crypto.randomUUID(), name: topicName };
+                if (subject.topics.some(t => t.name.toLowerCase() === trimmedName.toLowerCase())) {
+                    toast({
+                        title: 'Error',
+                        description: 'A topic with this name already exists in this subject.',
+                        variant: 'destructive',
+                    });
+                    return subject;
+                }
+                const newTopic = { id: crypto.randomUUID(), name: trimmedName };
+                toast({
+                    title: 'Success',
+                    description: `Topic "${trimmedName}" added to ${subject.name}.`,
+                });
                 return { ...subject, topics: [...subject.topics, newTopic]};
             }
             return subject;

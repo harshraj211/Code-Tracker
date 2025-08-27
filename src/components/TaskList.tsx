@@ -44,10 +44,8 @@ export function TaskList({ activeSubject, selectedDate, tasks, onAddTask, onTogg
   const progress = dailyTasks.length > 0 ? (completedTasks / dailyTasks.length) * 100 : 0;
 
   const handleAddTask = () => {
-    if (newTaskText.trim()) {
-      onAddTask(newTaskText.trim(), activeSubject.id, selectedTopicId);
-      setNewTaskText('');
-    }
+    onAddTask(newTaskText.trim(), activeSubject.id, selectedTopicId);
+    setNewTaskText('');
   };
 
   return (
@@ -117,5 +115,3 @@ export function TaskList({ activeSubject, selectedDate, tasks, onAddTask, onTogg
     </Card>
   );
 }
-
-    
