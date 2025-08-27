@@ -10,29 +10,47 @@ import { format } from 'date-fns';
 
 const initialSubjects: Subject[] = [
   {
-    id: 'dsa',
-    name: 'Data Structures & Algo',
+    id: 'javascript',
+    name: 'JavaScript',
     topics: [
-      { id: 'dsa-arrays', name: 'Arrays' },
-      { id: 'dsa-ll', name: 'Linked List' },
-      { id: 'dsa-graphs', name: 'Graphs' },
+      { id: 'js-vars', name: 'Variables & Data Types' },
+      { id: 'js-functions', name: 'Functions' },
+      { id: 'js-dom', name: 'DOM Manipulation' },
+      { id: 'js-es6', name: 'ES6+ Features' },
+      { id: 'js-async', name: 'Async/Await' },
     ],
   },
   {
-    id: 'webdev',
-    name: 'Web Development',
+    id: 'css',
+    name: 'CSS',
     topics: [
-      { id: 'webdev-react', name: 'React' },
-      { id: 'webdev-next', name: 'Next.js' },
-      { id: 'webdev-css', name: 'CSS' },
+      { id: 'css-selectors', name: 'Selectors & Specificity' },
+      { id: 'css-flexbox', name: 'Flexbox' },
+      { id: 'css-grid', name: 'Grid' },
+      { id: 'css-responsive', name: 'Responsive Design' },
+      { id: 'css-animations', name: 'Animations' },
     ],
   },
   {
-    id: 'python',
-    name: 'Python',
+    id: 'react',
+    name: 'React',
     topics: [
-        {id: 'python-basics', name: 'Basics'},
-        {id: 'python-django', name: 'Django'},
+      { id: 'react-components', name: 'Components & Props' },
+      { id: 'react-state', name: 'State & Lifecycle' },
+      { id: 'react-hooks', name: 'Hooks' },
+      { id: 'react-context', name: 'Context API' },
+      { id: 'react-router', name: 'React Router' },
+    ],
+  },
+  {
+    id: 'tailwind-css',
+    name: 'Tailwind CSS',
+    topics: [
+        {id: 'tailwind-basics', name: 'Utility-First Basics'},
+        {id: 'tailwind-responsive', name: 'Responsive Design'},
+        {id: 'tailwind-theme', name: 'Customizing Theme'},
+        {id: 'tailwind-plugins', name: 'Using Plugins'},
+        {id: 'tailwind-jit', name: 'JIT Compilation'},
     ]
   }
 ];
