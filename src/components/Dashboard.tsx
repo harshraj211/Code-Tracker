@@ -8,7 +8,7 @@ import { StreakCounter } from './StreakCounter';
 import { ThemeToggle } from './ThemeToggle';
 import { ProgressChart } from './ProgressChart';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
-import { SidebarInset } from './ui/sidebar';
+import { SidebarInset, SidebarTrigger } from './ui/sidebar';
 
 interface DashboardProps {
   subjects: Subject[];
@@ -36,6 +36,9 @@ export function Dashboard({
   if (!activeSubject) {
     return (
       <SidebarInset className="flex items-center justify-center">
+        <div className="flex items-center gap-4 absolute top-4 left-4">
+            <SidebarTrigger className="md:hidden" />
+        </div>
         <div className="text-center">
           <h2 className="text-2xl font-semibold mb-2">Welcome to CodeTracker</h2>
           <p className="text-muted-foreground">Select a subject from the sidebar to start, or add a new one.</p>
@@ -47,7 +50,10 @@ export function Dashboard({
   return (
     <SidebarInset className="flex-1 p-4 md:p-6 lg:p-8">
       <header className="flex items-center justify-between mb-6">
-        <h1 className="text-3xl font-bold">{activeSubject.name}</h1>
+        <div className="flex items-center gap-2">
+          <SidebarTrigger className="md:hidden" />
+          <h1 className="text-3xl font-bold">{activeSubject.name}</h1>
+        </div>
         <div className="flex items-center gap-4">
           <StreakCounter tasks={tasks} />
           <ThemeToggle />
