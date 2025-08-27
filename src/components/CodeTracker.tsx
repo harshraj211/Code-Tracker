@@ -381,10 +381,10 @@ export function CodeTracker() {
   useEffect(() => {
     // On mobile, if a subject is active, we want to set it to null so the user has to re-select
     // which also causes the sidebar to close automatically. This is a bit of a hacky way to close the sidebar.
-    if (isMobile) {
+    if (isMobile && activeSubjectId) {
       setActiveSubjectId(null);
     }
-  }, [isMobile]);
+  }, [isMobile, activeSubjectId]);
 
   const activeSubject = useMemo(() => subjects.find(s => s.id === activeSubjectId), [subjects, activeSubjectId]);
   
