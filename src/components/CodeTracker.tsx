@@ -1,3 +1,4 @@
+
 "use client";
 
 import React, { useState, useMemo, useEffect } from 'react';
@@ -6,7 +7,6 @@ import { TrackerSidebar } from '@/components/TrackerSidebar';
 import { Dashboard } from '@/components/Dashboard';
 import type { Subject, Task } from '@/lib/types';
 import { format } from 'date-fns';
-import { useIsMobile } from '@/hooks/use-mobile';
 import { useLocalStorage } from '@/hooks/use-local-storage';
 
 const initialSubjects: Subject[] = [
@@ -372,24 +372,15 @@ const initialSubjects: Subject[] = [
 ];
 
 export function CodeTracker() {
+  const [isClient, setIsClient] = useState(false);
   const [subjects, setSubjects] = useLocalStorage<Subject[]>('subjects', initialSubjects);
   const [tasks, setTasks] = useLocalStorage<Task[]>('tasks', []);
-  const [activeSubjectId, setActiveSubjectId] = useState<string | null>(null);
+  const [activeSubjectId, setActiveSubjectId] = useLocalStorage<string | null>('activeSubjectId', null);
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
-  const isMobile = useIsMobile();
-  const [isClient, setIsClient] = useState(false);
-
+  
   useEffect(() => {
     setIsClient(true);
   }, []);
-
-  useEffect(() => {
-    // On mobile, if a subject is active, we want to set it to null so the user has to re-select
-    // which also causes the sidebar to close automatically. This is a bit of a hacky way to close the sidebar.
-    if (isClient && isMobile && activeSubjectId) {
-      setActiveSubjectId(null);
-    }
-  }, [isClient, isMobile, activeSubjectId]);
 
   const activeSubject = useMemo(() => subjects.find(s => s.id === activeSubjectId), [subjects, activeSubjectId]);
   
@@ -440,7 +431,8 @@ export function CodeTracker() {
   };
 
   if (!isClient) {
-    return null; // or a loading spinner
+    // Render a loading state or nothing on the server to avoid hydration mismatches
+    return null; 
   }
 
   return (
@@ -468,3 +460,5 @@ export function CodeTracker() {
     </SidebarProvider>
   );
 }
+
+    
