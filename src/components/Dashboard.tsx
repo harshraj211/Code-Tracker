@@ -9,10 +9,7 @@ import { ThemeToggle } from './ThemeToggle';
 import { ProgressChart } from './ProgressChart';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import { SidebarInset, SidebarTrigger } from './ui/sidebar';
-import { CheckCircle, ListPlus, Flame, LogIn } from 'lucide-react';
-import { useAuth } from './providers/auth-provider';
-import { Button } from './ui/button';
-import Link from 'next/link';
+import { CheckCircle, ListPlus, Flame } from 'lucide-react';
 
 interface DashboardProps {
   subjects: Subject[];
@@ -37,7 +34,6 @@ export function Dashboard({
   onDeleteTask,
   onAddTopic
 }: DashboardProps) {
-  const { user } = useAuth();
 
   return (
     <SidebarInset className="flex-1 p-4 md:p-6 lg:p-8 bg-secondary/40">
@@ -52,24 +48,7 @@ export function Dashboard({
         </div>
       </header>
       
-      {!user ? (
-        <div className="flex items-center justify-center h-[calc(100vh-12rem)]">
-          <Card className="w-full max-w-md shadow-lg">
-            <CardHeader>
-              <CardTitle className="text-3xl font-bold text-center">Welcome to CodeTracker!</CardTitle>
-            </CardHeader>
-            <CardContent className="text-center">
-              <p className="text-muted-foreground mb-8">Sign in to save your progress and track your coding journey across devices.</p>
-              <Link href="/login" passHref>
-                <Button className="w-full">
-                  <LogIn className="mr-2 h-5 w-5" />
-                  Sign In
-                </Button>
-              </Link>
-            </CardContent>
-          </Card>
-        </div>
-      ) : !activeSubject ? (
+      {!activeSubject ? (
          <div className="flex items-center justify-center h-[calc(100vh-12rem)]">
             <Card className="w-full max-w-2xl shadow-lg">
               <CardHeader>
