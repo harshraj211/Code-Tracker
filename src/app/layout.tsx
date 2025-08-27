@@ -23,8 +23,8 @@ export default function RootLayout({
       <body className={cn('antialiased', inter.variable)}>
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           <AuthProvider>
-            {children}
-            <Toaster />
+              {children}
+              <Toaster />
           </AuthProvider>
         </ThemeProvider>
       </body>

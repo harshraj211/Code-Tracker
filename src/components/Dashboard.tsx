@@ -12,6 +12,7 @@ import { SidebarInset, SidebarTrigger } from './ui/sidebar';
 import { CheckCircle, ListPlus, Flame, LogIn } from 'lucide-react';
 import { useAuth } from './providers/auth-provider';
 import { Button } from './ui/button';
+import Link from 'next/link';
 
 interface DashboardProps {
   subjects: Subject[];
@@ -36,7 +37,7 @@ export function Dashboard({
   onDeleteTask,
   onAddTopic
 }: DashboardProps) {
-  const { user, signInWithGoogle } = useAuth();
+  const { user } = useAuth();
 
   return (
     <SidebarInset className="flex-1 p-4 md:p-6 lg:p-8 bg-secondary/40">
@@ -59,10 +60,12 @@ export function Dashboard({
             </CardHeader>
             <CardContent className="text-center">
               <p className="text-muted-foreground mb-8">Sign in to save your progress and track your coding journey across devices.</p>
-              <Button onClick={signInWithGoogle} className="w-full">
-                <LogIn className="mr-2 h-5 w-5" />
-                Sign in with Google
-              </Button>
+              <Link href="/login" passHref>
+                <Button className="w-full">
+                  <LogIn className="mr-2 h-5 w-5" />
+                  Sign In
+                </Button>
+              </Link>
             </CardContent>
           </Card>
         </div>
