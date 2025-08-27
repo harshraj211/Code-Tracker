@@ -42,7 +42,7 @@ export function Dashboard({
           <h1 className="text-3xl font-bold">{activeSubject?.name || 'CodeTracker'}</h1>
         </div>
         <div className="flex items-center gap-4">
-          <StreakCounter tasks={tasks} />
+          {activeSubject && <StreakCounter tasks={tasks} subjectId={activeSubject.id} />}
           <ThemeToggle />
         </div>
       </header>
@@ -99,5 +99,3 @@ export function Dashboard({
     </SidebarInset>
   );
 }
-
-    
