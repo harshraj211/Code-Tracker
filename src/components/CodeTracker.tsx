@@ -5,7 +5,9 @@ import { Sidebar } from '@/components/ui/sidebar';
 import { TrackerSidebarContent } from '@/components/TrackerSidebar';
 import { Dashboard } from '@/components/Dashboard';
 import type { Subject, Task } from '@/lib/types';
-import { SheetContent } from '@/components/ui/sheet';
+import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
+import { Button } from './ui/button';
+import { PanelLeft } from 'lucide-react';
 
 interface CodeTrackerProps {
   subjects: Subject[];
@@ -47,26 +49,28 @@ export function CodeTracker({
               addSubject={addSubject}
             />
           </Sidebar>
-          <SheetContent side="left" className="w-72 p-0 md:hidden">
-            <TrackerSidebarContent
+          
+          <Sheet>
+            <Dashboard
               subjects={subjects}
-              activeSubjectId={activeSubjectId}
-              setActiveSubjectId={setActiveSubjectId}
-              addSubject={addSubject}
+              activeSubject={activeSubject}
+              tasks={tasks}
+              selectedDate={selectedDate}
+              setSelectedDate={setSelectedDate}
+              onAddTask={addTask}
+              onToggleTask={toggleTask}
+              onDeleteTask={deleteTask}
+              onAddTopic={addTopic}
             />
-          </SheetContent>
-
-          <Dashboard
-            subjects={subjects}
-            activeSubject={activeSubject}
-            tasks={tasks}
-            selectedDate={selectedDate}
-            setSelectedDate={setSelectedDate}
-            onAddTask={addTask}
-            onToggleTask={toggleTask}
-            onDeleteTask={deleteTask}
-            onAddTopic={addTopic}
-          />
+            <SheetContent side="left" className="w-72 p-0 md:hidden">
+              <TrackerSidebarContent
+                  subjects={subjects}
+                  activeSubjectId={activeSubjectId}
+                  setActiveSubjectId={setActiveSubjectId}
+                  addSubject={addSubject}
+                />
+            </SheetContent>
+          </Sheet>
       </div>
   );
 }

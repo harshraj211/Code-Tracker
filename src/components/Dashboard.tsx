@@ -8,8 +8,10 @@ import { StreakCounter } from './StreakCounter';
 import { ThemeToggle } from './ThemeToggle';
 import { ProgressChart } from './ProgressChart';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
-import { SidebarInset, SidebarTrigger } from './ui/sidebar';
-import { CheckCircle, ListPlus, Flame } from 'lucide-react';
+import { SidebarInset } from './ui/sidebar';
+import { CheckCircle, ListPlus, Flame, PanelLeft } from 'lucide-react';
+import { SheetTrigger } from './ui/sheet';
+import { Button } from './ui/button';
 
 interface DashboardProps {
   subjects: Subject[];
@@ -39,7 +41,12 @@ export function Dashboard({
     <SidebarInset className="flex-1 p-4 md:p-6 lg:p-8 bg-secondary/40">
       <header className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-4">
-          <SidebarTrigger className="md:hidden" />
+          <SheetTrigger asChild>
+            <Button variant="ghost" size="icon" className="md:hidden">
+              <PanelLeft />
+              <span className="sr-only">Toggle Sidebar</span>
+            </Button>
+          </SheetTrigger>
           <h1 className="text-2xl md:text-3xl font-bold text-foreground">{activeSubject?.name || 'CodeTracker'}</h1>
         </div>
         <div className="flex items-center gap-4">
