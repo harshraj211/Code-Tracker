@@ -2,7 +2,7 @@
 
 import React, { useMemo } from 'react';
 import type { Task } from '@/lib/types';
-import { format, subDays, differenceInCalendarDays } from 'date-fns';
+import { format, subDays, differenceInCalendarDays, parseISO } from 'date-fns';
 import { Flame } from 'lucide-react';
 import { Badge } from './ui/badge';
 
@@ -12,33 +12,33 @@ interface StreakCounterProps {
 
 export function StreakCounter({ tasks }: StreakCounterProps) {
   const streak = useMemo(() => {
-    if (tasks.length === 0) return 0;
+    if (!tasks || tasks.length === 0) return 0;
 
-    const completedDates = new Set<string>();
-    tasks.forEach(task => {
-      if (task.completed) {
-        completedDates.add(task.date);
-      }
-    });
+    const completedDates = [...new Set(
+      tasks.filter(task => task.completed).map(task => task.date)
+    )].map(dateStr => parseISO(dateStr)).sort((a, b) => b.getTime() - a.getTime());
 
-    if (completedDates.size === 0) return 0;
-    
-    let currentStreak = 0;
-    let today = new Date();
+    if (completedDates.length === 0) return 0;
 
-    if(completedDates.has(format(today, 'yyyy-MM-dd'))) {
-        currentStreak = 1;
-    } else if (completedDates.has(format(subDays(today, 1), 'yyyy-MM-dd'))) {
-        currentStreak = 1;
-        today = subDays(today, 1)
-    } else {
-        return 0;
+    const today = new Date();
+    const mostRecentDate = completedDates[0];
+
+    // If the last completed day is not today or yesterday, streak is 0
+    if (differenceInCalendarDays(today, mostRecentDate) > 1) {
+      return 0;
     }
-    
-    let currentDate = subDays(today, 1);
-    while (completedDates.has(format(currentDate, 'yyyy-MM-dd'))) {
-      currentStreak++;
-      currentDate = subDays(currentDate, 1);
+
+    let currentStreak = 1;
+    if (completedDates.length > 1) {
+        for (let i = 0; i < completedDates.length - 1; i++) {
+            const day = completedDates[i];
+            const prevDay = completedDates[i+1];
+            if (differenceInCalendarDays(day, prevDay) === 1) {
+                currentStreak++;
+            } else {
+                break; // Found a gap in the streak
+            }
+        }
     }
     
     return currentStreak;
