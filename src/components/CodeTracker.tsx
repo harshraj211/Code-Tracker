@@ -1,3 +1,4 @@
+
 "use client";
 
 import React, { useState, useMemo, useEffect } from 'react';
@@ -5,9 +6,10 @@ import { SidebarProvider } from '@/components/ui/sidebar';
 import { TrackerSidebar } from '@/components/TrackerSidebar';
 import { Dashboard } from '@/components/Dashboard';
 import type { Subject, Task } from '@/lib/types';
-import { useLocalStorage } from '@/lib/hooks/use-local-storage';
 import { format } from 'date-fns';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { db } from '@/lib/firebase';
+import { collection, onSnapshot, addDoc, updateDoc, deleteDoc, doc, query, orderBy, where } from 'firebase/firestore';
 
 const initialSubjects: Subject[] = [
   // Web Development
@@ -372,11 +374,36 @@ const initialSubjects: Subject[] = [
 ];
 
 export function CodeTracker() {
-  const [subjects, setSubjects] = useLocalStorage<Subject[]>('subjects', initialSubjects);
-  const [tasks, setTasks] = useLocalStorage<Task[]>('tasks', []);
+  const [subjects, setSubjects] = useState<Subject[]>(initialSubjects);
+  const [tasks, setTasks] = useState<Task[]>([]);
   const [activeSubjectId, setActiveSubjectId] = useState<string | null>(null);
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const isMobile = useIsMobile();
+  
+  // Ref for the subjects collection
+  const subjectsCollectionRef = collection(db, 'subjects');
+  const tasksCollectionRef = collection(db, 'tasks');
+
+  // Fetch subjects from firestore
+  useEffect(() => {
+    const q = query(subjectsCollectionRef, orderBy('name'));
+    const unsubscribe = onSnapshot(q, (querySnapshot) => {
+      const storedSubjects = querySnapshot.docs.map(doc => ({...doc.data(), id: doc.id}))  as Subject[];
+      const allSubjects = [...initialSubjects, ...storedSubjects.filter(ss => !initialSubjects.some(is => is.id === ss.id))];
+      setSubjects(allSubjects);
+    });
+    return () => unsubscribe();
+  }, []);
+
+  // Fetch tasks from firestore
+   useEffect(() => {
+    const q = query(tasksCollectionRef);
+    const unsubscribe = onSnapshot(q, (querySnapshot) => {
+      const tasksData = querySnapshot.docs.map(doc => ({...doc.data(), id: doc.id})) as Task[];
+      setTasks(tasksData);
+    });
+    return () => unsubscribe();
+  }, []);
 
   useEffect(() => {
     if (activeSubjectId === null && !isMobile) {
@@ -387,57 +414,48 @@ export function CodeTracker() {
   }, [isMobile, subjects, activeSubjectId]);
 
   const activeSubject = useMemo(() => subjects.find(s => s.id === activeSubjectId), [subjects, activeSubjectId]);
-
-  const addSubject = (name: string) => {
-    const newSubject: Subject = {
+  
+  const addSubject = async (name: string) => {
+    const newSubject: Omit<Subject, 'id'> = {
       id: name.toLowerCase().replace(/\s+/g, '-'),
       name,
       topics: [],
     };
-    setSubjects(prevSubjects => {
-      // Find the 'Other' category
-      const otherCategoryIndex = prevSubjects.findIndex(s => s.id === 'other-category');
-      if (otherCategoryIndex !== -1) {
-        // Insert the new subject before the 'Other' category
-        const newSubjects = [...prevSubjects];
-        newSubjects.splice(otherCategoryIndex, 0, newSubject);
-        return newSubjects;
-      }
-      // If 'Other' category is not found, just append it
-      return [...prevSubjects, newSubject];
-    });
-    // Set the new subject as active
-    setActiveSubjectId(newSubject.id);
+    const docRef = await addDoc(subjectsCollectionRef, newSubject);
+    setActiveSubjectId(docRef.id);
   };
-
-  const addTask = (text: string, subjectId: string, topicId?: string) => {
-    const newTask: Task = {
-      id: crypto.randomUUID(),
+  
+  const addTask = async (text: string, subjectId: string, topicId?: string) => {
+    await addDoc(tasksCollectionRef, {
       text,
       completed: false,
       date: format(selectedDate, 'yyyy-MM-dd'),
       subjectId,
       topicId,
-    };
-    setTasks([...tasks, newTask]);
+    });
   };
 
-  const toggleTask = (taskId: string) => {
-    setTasks(tasks.map(task => task.id === taskId ? { ...task, completed: !task.completed } : task));
+  const toggleTask = async (taskId: string) => {
+    const task = tasks.find(t => t.id === taskId);
+    if (task) {
+      const taskDocRef = doc(db, 'tasks', taskId);
+      await updateDoc(taskDocRef, { completed: !task.completed });
+    }
   };
 
-  const deleteTask = (taskId: string) => {
-    setTasks(tasks.filter(task => task.id !== taskId));
+  const deleteTask = async (taskId: string) => {
+    const taskDocRef = doc(db, 'tasks', taskId);
+    await deleteDoc(taskDocRef);
   };
   
-  const addTopic = (subjectId: string, topicName: string) => {
-    const newTopic = { id: crypto.randomUUID(), name: topicName };
-    setSubjects(subjects.map(s => {
-      if (s.id === subjectId) {
-        return { ...s, topics: [...s.topics, newTopic] };
-      }
-      return s;
-    }));
+  const addTopic = async (subjectId: string, topicName: string) => {
+    const subject = subjects.find(s => s.id === subjectId);
+    if(subject && !subject.isCategory) {
+        const subjectDocRef = doc(db, 'subjects', subjectId);
+        const newTopic = { id: crypto.randomUUID(), name: topicName };
+        const updatedTopics = [...subject.topics, newTopic];
+        await updateDoc(subjectDocRef, { topics: updatedTopics });
+    }
   };
 
   return (
