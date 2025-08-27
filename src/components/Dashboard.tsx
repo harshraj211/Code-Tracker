@@ -33,72 +33,69 @@ export function Dashboard({
   onDeleteTask,
   onAddTopic
 }: DashboardProps) {
-  if (!activeSubject) {
-    return (
-      <SidebarInset className="flex items-center justify-center">
-        <div className="flex items-center gap-4 absolute top-4 left-4">
-            <SidebarTrigger className="md:hidden" />
-        </div>
-        <div className="text-center">
-          <h2 className="text-2xl font-semibold mb-2">Welcome to CodeTracker</h2>
-          <p className="text-muted-foreground">Select a subject from the sidebar to start, or add a new one.</p>
-        </div>
-      </SidebarInset>
-    );
-  }
 
   return (
     <SidebarInset className="flex-1 p-4 md:p-6 lg:p-8">
       <header className="flex items-center justify-between mb-6">
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-4">
           <SidebarTrigger className="md:hidden" />
-          <h1 className="text-3xl font-bold">{activeSubject.name}</h1>
+          <h1 className="text-3xl font-bold">{activeSubject?.name || 'CodeTracker'}</h1>
         </div>
         <div className="flex items-center gap-4">
           <StreakCounter tasks={tasks} />
           <ThemeToggle />
         </div>
       </header>
+      
+      {!activeSubject ? (
+         <div className="flex items-center justify-center h-[calc(100vh-12rem)]">
+            <div className="text-center">
+                <h2 className="text-2xl font-semibold mb-2">Welcome to CodeTracker</h2>
+                <p className="text-muted-foreground">Select a subject from the sidebar to start, or add a new one.</p>
+            </div>
+         </div>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="md:col-span-2 space-y-6">
+                <TaskList
+                    key={`${activeSubject.id}-${selectedDate.toISOString()}`}
+                    activeSubject={activeSubject}
+                    selectedDate={selectedDate}
+                    tasks={tasks}
+                    onAddTask={onAddTask}
+                    onToggleTask={onToggleTask}
+                    onDeleteTask={onDeleteTask}
+                    onAddTopic={onAddTopic}
+                />
+            </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="md:col-span-2 space-y-6">
-            <TaskList
-                key={`${activeSubject.id}-${selectedDate.toISOString()}`}
-                activeSubject={activeSubject}
-                selectedDate={selectedDate}
-                tasks={tasks}
-                onAddTask={onAddTask}
-                onToggleTask={onToggleTask}
-                onDeleteTask={onDeleteTask}
-                onAddTopic={onAddTopic}
-              />
+            <div className="space-y-6 md:col-span-1">
+            <Card>
+                <CardHeader>
+                <CardTitle>Calendar</CardTitle>
+                </CardHeader>
+                <CardContent>
+                <CalendarView
+                    tasks={tasks}
+                    selectedDate={selectedDate}
+                    setSelectedDate={setSelectedDate}
+                    subjectId={activeSubject.id}
+                />
+                </CardContent>
+            </Card>
+            
+            <Card>
+                <CardHeader>
+                <CardTitle>Weekly Progress</CardTitle>
+                </CardHeader>
+                <CardContent>
+                <ProgressChart tasks={tasks} subjectId={activeSubject.id} />
+                </CardContent>
+            </Card>
+            </div>
         </div>
+      )}
 
-        <div className="space-y-6 md:col-span-1">
-          <Card>
-            <CardHeader>
-              <CardTitle>Calendar</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <CalendarView
-                tasks={tasks}
-                selectedDate={selectedDate}
-                setSelectedDate={setSelectedDate}
-                subjectId={activeSubject.id}
-              />
-            </CardContent>
-          </Card>
-          
-          <Card>
-            <CardHeader>
-              <CardTitle>Weekly Progress</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <ProgressChart tasks={tasks} subjectId={activeSubject.id} />
-            </CardContent>
-          </Card>
-        </div>
-      </div>
     </SidebarInset>
   );
 }

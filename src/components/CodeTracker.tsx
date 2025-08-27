@@ -1,12 +1,13 @@
 "use client";
 
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { SidebarProvider } from '@/components/ui/sidebar';
 import { TrackerSidebar } from '@/components/TrackerSidebar';
 import { Dashboard } from '@/components/Dashboard';
 import type { Subject, Task } from '@/lib/types';
 import { useLocalStorage } from '@/lib/hooks/use-local-storage';
 import { format } from 'date-fns';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 const initialSubjects: Subject[] = [
   // Web Development
@@ -71,6 +72,8 @@ const initialSubjects: Subject[] = [
         {id: 'node-modules', name: 'Modules'},
     ]
   },
+  { id: 'asp-net', name: 'ASP.NET', topics: [] },
+  { id: 'jsp', name: 'JSP', topics: [] },
 
   // Mobile Development
   { id: 'mobile-dev-category', name: 'Mobile Development', topics: [], isCategory: true },
@@ -104,6 +107,7 @@ const initialSubjects: Subject[] = [
       { id: 'swift-concurrency', name: 'Concurrency' },
     ]
   },
+  { id: 'objective-c', name: 'Objective-C (iOS)', topics: [] },
   {
     id: 'dart',
     name: 'Dart (Flutter)',
@@ -157,6 +161,9 @@ const initialSubjects: Subject[] = [
         {id: 'rust-macros', name: 'Macros'},
     ]
   },
+  { id: 'zig', name: 'Zig', topics: [] },
+  { id: 'd', name: 'D', topics: [] },
+  { id: 'assembly', name: 'Assembly', topics: [] },
 
   // AI & Data Science
   { id: 'ai-ds-category', name: 'AI & Data Science', topics: [], isCategory: true },
@@ -190,6 +197,10 @@ const initialSubjects: Subject[] = [
         {id: 'julia-parallel', name: 'Parallel Computing'},
     ]
   },
+  { id: 'matlab', name: 'MATLAB', topics: [] },
+  { id: 'sas', name: 'SAS', topics: [] },
+  { id: 'spss', name: 'SPSS', topics: [] },
+  { id: 'mojo-ai', name: 'Mojo', topics: [] },
 
    // Game Development
    { id: 'game-dev-category', name: 'Game Development', topics: [], isCategory: true },
@@ -203,6 +214,7 @@ const initialSubjects: Subject[] = [
       { id: 'csharp-unity-shaders', name: 'Shaders' },
     ]
   },
+  { id: 'cpp-unreal', name: 'C++ (Unreal Engine)', topics: [] },
   {
     id: 'lua',
     name: 'Lua',
@@ -213,6 +225,27 @@ const initialSubjects: Subject[] = [
         {id: 'lua-metatables', name: 'Metatables'},
     ]
   },
+  { id: 'js-games', name: 'JavaScript (Web games)', topics: [] },
+  { id: 'gdscript', name: 'GDScript (Godot)', topics: [] },
+
+  // Functional Programming
+  { id: 'functional-prog-category', name: 'Functional Programming', topics: [], isCategory: true },
+  { id: 'haskell', name: 'Haskell', topics: [] },
+  { id: 'erlang', name: 'Erlang', topics: [] },
+  { id: 'elixir', name: 'Elixir', topics: [] },
+  { id: 'f-sharp', name: 'F#', topics: [] },
+  { id: 'ocaml', name: 'OCaml', topics: [] },
+  { id: 'scheme', name: 'Scheme', topics: [] },
+  { id: 'racket', name: 'Racket', topics: [] },
+
+  // Scripting & Automation
+  { id: 'scripting-auto-category', name: 'Scripting & Automation', topics: [], isCategory: true },
+  { id: 'python-script', name: 'Python', topics: [] },
+  { id: 'perl', name: 'Perl', topics: [] },
+  { id: 'ruby-script', name: 'Ruby', topics: [] },
+  { id: 'lua-script', name: 'Lua', topics: [] },
+  { id: 'shell', name: 'Shell (Bash, Zsh)', topics: [] },
+  { id: 'tcl', name: 'Tcl', topics: [] },
 
   // Database Languages
   { id: 'db-lang-category', name: 'Database Languages', topics: [], isCategory: true },
@@ -226,6 +259,8 @@ const initialSubjects: Subject[] = [
         {id: 'sql-indexing', name: 'Indexing'},
     ]
   },
+  { id: 'pl-sql', name: 'PL/SQL', topics: [] },
+  { id: 't-sql', name: 'T-SQL', topics: [] },
   {
     id: 'graphql',
     name: 'GraphQL',
@@ -236,6 +271,18 @@ const initialSubjects: Subject[] = [
         {id: 'graphql-resolvers', name: 'Resolvers'},
     ]
   },
+  
+  // Statistical & Mathematical
+  { id: 'stat-math-category', name: 'Statistical & Mathematical', topics: [], isCategory: true },
+  { id: 'r-stat', name: 'R', topics: [] },
+  { id: 'matlab-stat', name: 'MATLAB', topics: [] },
+  { id: 'octave', name: 'Octave', topics: [] },
+
+  // Hardware Description
+  { id: 'hardware-desc-category', name: 'Hardware Description', topics: [], isCategory: true },
+  { id: 'vhdl', name: 'VHDL', topics: [] },
+  { id: 'verilog', name: 'Verilog', topics: [] },
+  { id: 'systemverilog', name: 'SystemVerilog', topics: [] },
 
   // Cloud & Infrastructure
   { id: 'cloud-infra-category', name: 'Cloud & Infrastructure', topics: [], isCategory: true },
@@ -249,6 +296,8 @@ const initialSubjects: Subject[] = [
         {id: 'go-http', name: 'net/http'},
     ]
   },
+  { id: 'python-cloud', name: 'Python', topics: [] },
+  { id: 'ruby-cloud', name: 'Ruby', topics: [] },
   {
     id: 'hcl',
     name: 'HCL (Terraform)',
@@ -259,6 +308,33 @@ const initialSubjects: Subject[] = [
         {id: 'hcl-functions', name: 'Functions'},
     ]
   },
+  { id: 'yaml', name: 'YAML', topics: [] },
+
+  // Legacy / Historical
+  { id: 'legacy-hist-category', name: 'Legacy / Historical', topics: [], isCategory: true },
+  { id: 'fortran', name: 'Fortran', topics: [] },
+  { id: 'lisp', name: 'Lisp', topics: [] },
+  { id: 'cobol', name: 'COBOL', topics: [] },
+  { id: 'algol', name: 'ALGOL', topics: [] },
+  { id: 'basic', name: 'BASIC', topics: [] },
+  { id: 'pascal', name: 'Pascal', topics: [] },
+  { id: 'ada', name: 'Ada', topics: [] },
+
+  // Modern / Experimental
+  { id: 'modern-exp-category', name: 'Modern / Experimental', topics: [], isCategory: true },
+  { id: 'crystal', name: 'Crystal', topics: [] },
+  { id: 'nim', name: 'Nim', topics: [] },
+  { id: 'pony', name: 'Pony', topics: [] },
+  { id: 'carbon', name: 'Carbon', topics: [] },
+  { id: 'mojo-exp', name: 'Mojo', topics: [] },
+
+  // Esoteric (Fun / Joke)
+  { id: 'esoteric-category', name: 'Esoteric (Fun / Joke)', topics: [], isCategory: true },
+  { id: 'brainfuck', name: 'Brainfuck', topics: [] },
+  { id: 'whitespace', name: 'Whitespace', topics: [] },
+  { id: 'lolcode', name: 'LOLCODE', topics: [] },
+  { id: 'piet', name: 'Piet', topics: [] },
+  { id: 'malbolge', name: 'Malbolge', topics: [] },
 
   // Other
   { id: 'other-category', name: 'Other', topics: [], isCategory: true },
@@ -298,8 +374,17 @@ const initialSubjects: Subject[] = [
 export function CodeTracker() {
   const [subjects, setSubjects] = useLocalStorage<Subject[]>('subjects', initialSubjects);
   const [tasks, setTasks] = useLocalStorage<Task[]>('tasks', []);
-  const [activeSubjectId, setActiveSubjectId] = useState<string | null>(initialSubjects.find(s => !s.isCategory)?.id || null);
+  const [activeSubjectId, setActiveSubjectId] = useState<string | null>(null);
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
+  const isMobile = useIsMobile();
+
+  useEffect(() => {
+    if (!isMobile) {
+      setActiveSubjectId(initialSubjects.find(s => !s.isCategory)?.id || null);
+    } else {
+        setActiveSubjectId(null);
+    }
+  }, [isMobile]);
 
   const activeSubject = useMemo(() => subjects.find(s => s.id === activeSubjectId), [subjects, activeSubjectId]);
 
