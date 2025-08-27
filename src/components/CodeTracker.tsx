@@ -379,12 +379,12 @@ export function CodeTracker() {
   const isMobile = useIsMobile();
 
   useEffect(() => {
-    if (!isMobile) {
-      setActiveSubjectId(initialSubjects.find(s => !s.isCategory)?.id || null);
-    } else {
-        setActiveSubjectId(null);
+    if (activeSubjectId === null && !isMobile) {
+      setActiveSubjectId(subjects.find(s => !s.isCategory)?.id || null);
+    } else if (isMobile) {
+      setActiveSubjectId(null);
     }
-  }, [isMobile]);
+  }, [isMobile, subjects, activeSubjectId]);
 
   const activeSubject = useMemo(() => subjects.find(s => s.id === activeSubjectId), [subjects, activeSubjectId]);
 
@@ -394,10 +394,20 @@ export function CodeTracker() {
       name,
       topics: [],
     };
-    setSubjects([...subjects, newSubject]);
-    if (!activeSubjectId) {
-      setActiveSubjectId(newSubject.id);
-    }
+    setSubjects(prevSubjects => {
+      // Find the 'Other' category
+      const otherCategoryIndex = prevSubjects.findIndex(s => s.id === 'other-category');
+      if (otherCategoryIndex !== -1) {
+        // Insert the new subject before the 'Other' category
+        const newSubjects = [...prevSubjects];
+        newSubjects.splice(otherCategoryIndex, 0, newSubject);
+        return newSubjects;
+      }
+      // If 'Other' category is not found, just append it
+      return [...prevSubjects, newSubject];
+    });
+    // Set the new subject as active
+    setActiveSubjectId(newSubject.id);
   };
 
   const addTask = (text: string, subjectId: string, topicId?: string) => {
@@ -455,5 +465,3 @@ export function CodeTracker() {
     </SidebarProvider>
   );
 }
-
-    
