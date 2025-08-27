@@ -9,18 +9,15 @@ import { useLocalStorage } from '@/lib/hooks/use-local-storage';
 import { format } from 'date-fns';
 
 const initialSubjects: Subject[] = [
+  // Web Development
   {
-    id: 'javascript',
-    name: 'JavaScript',
+    id: 'html',
+    name: 'HTML',
     topics: [
-      { id: 'js-vars', name: 'Variables & Data Types' },
-      { id: 'js-functions', name: 'Functions' },
-      { id: 'js-dom', name: 'DOM Manipulation' },
-      { id: 'js-es6', name: 'ES6+ Features' },
-      { id: 'js-async', name: 'Async/Await' },
-      { id: 'js-objects', name: 'Objects and Prototypes' },
-      { id: 'js-arrays', name: 'Array Methods' },
-      { id: 'js-events', name: 'Event Handling' },
+      { id: 'html-basics', name: 'Basics & Structure' },
+      { id: 'html-forms', name: 'Forms & Inputs' },
+      { id: 'html-media', name: 'Media Elements' },
+      { id: 'html-apis', name: 'HTML5 APIs' },
     ],
   },
   {
@@ -31,48 +28,108 @@ const initialSubjects: Subject[] = [
       { id: 'css-flexbox', name: 'Flexbox' },
       { id: 'css-grid', name: 'Grid' },
       { id: 'css-responsive', name: 'Responsive Design' },
-      { id: 'css-animations', name: 'Animations & Transitions' },
-      { id: 'css-vars', name: 'Custom Properties' },
-      { id: 'css-pre', name: 'Pre-processors (Sass/Less)' },
     ],
   },
   {
-    id: 'react',
-    name: 'React',
+    id: 'javascript',
+    name: 'JavaScript',
     topics: [
-      { id: 'react-components', name: 'Components & Props' },
-      { id: 'react-state', name: 'State & Lifecycle' },
-      { id: 'react-hooks', name: 'Hooks' },
-      { id: 'react-context', name: 'Context API' },
-      { id: 'react-router', name: 'React Router' },
-      { id: 'react-performance', name: 'Performance Optimization' },
-      { id: 'react-testing', name: 'Testing with Jest & RTL' },
+      { id: 'js-vars', name: 'Variables & Data Types' },
+      { id: 'js-functions', name: 'Functions' },
+      { id: 'js-dom', name: 'DOM Manipulation' },
+      { id: 'js-async', name: 'Async/Await' },
     ],
   },
   {
-    id: 'tailwind-css',
-    name: 'Tailwind CSS',
+    id: 'typescript',
+    name: 'TypeScript',
     topics: [
-        {id: 'tailwind-basics', name: 'Utility-First Basics'},
-        {id: 'tailwind-responsive', name: 'Responsive Design'},
-        {id: 'tailwind-theme', name: 'Customizing Theme'},
-        {id: 'tailwind-plugins', name: 'Using Plugins'},
-        {id: 'tailwind-jit', name: 'JIT Compilation'},
+        {id: 'ts-types', name: 'Basic Types'},
+        {id: 'ts-interfaces', name: 'Interfaces'},
+        {id: 'ts-generics', name: 'Generics'},
+        {id: 'ts-decorators', name: 'Decorators'},
     ]
   },
   {
-    id: 'dsa',
-    name: 'Data Structures & Algos',
+    id: 'php',
+    name: 'PHP',
     topics: [
-      {id: 'dsa-arrays', name: 'Arrays & Strings'},
-      {id: 'dsa-linked-lists', name: 'Linked Lists'},
-      {id: 'dsa-stacks-queues', name: 'Stacks & Queues'},
-      {id: 'dsa-trees', name: 'Trees (Binary, BST)'},
-      {id: 'dsa-graphs', name: 'Graphs'},
-      {id: 'dsa-heaps', name: 'Heaps & Priority Queues'},
-      {id: 'dsa-sorting', name: 'Sorting Algorithms'},
-      {id: 'dsa-searching', name: 'Searching Algorithms'},
-      {id: 'dsa-dp', name: 'Dynamic Programming'},
+        {id: 'php-syntax', name: 'Basic Syntax'},
+        {id: 'php-forms', name: 'Form Handling'},
+        {id: 'php-sessions', name: 'Sessions & Cookies'},
+        {id: 'php-mysql', name: 'MySQL Integration'},
+    ]
+  },
+  {
+    id: 'node-js',
+    name: 'Node.js',
+    topics: [
+        {id: 'node-event-loop', name: 'Event Loop'},
+        {id: 'node-fs', name: 'File System API'},
+        {id: 'node-express', name: 'Express.js'},
+        {id: 'node-modules', name: 'Modules'},
+    ]
+  },
+  // Mobile Development
+  {
+    id: 'java-android',
+    name: 'Java (Android)',
+    topics: [
+      { id: 'java-android-activities', name: 'Activities & Lifecycles' },
+      { id: 'java-android-ui', name: 'UI & Layouts' },
+      { id: 'java-android-data', name: 'Data Storage' },
+      { id: 'java-android-networking', name: 'Networking' },
+    ]
+  },
+  {
+    id: 'kotlin',
+    name: 'Kotlin (Android)',
+    topics: [
+      { id: 'kotlin-coroutines', name: 'Coroutines' },
+      { id: 'kotlin-jetpack', name: 'Jetpack Compose' },
+      { id: 'kotlin-null', name: 'Null Safety' },
+      { id: 'kotlin-delegation', name: 'Delegation' },
+    ]
+  },
+  {
+    id: 'swift',
+    name: 'Swift (iOS)',
+    topics: [
+      { id: 'swift-uikit', name: 'UIKit Basics' },
+      { id: 'swift-swiftui', name: 'SwiftUI' },
+      { id: 'swift-data', name: 'Core Data' },
+      { id: 'swift-concurrency', name: 'Concurrency' },
+    ]
+  },
+  {
+    id: 'dart',
+    name: 'Dart (Flutter)',
+    topics: [
+      { id: 'dart-widgets', name: 'Widgets' },
+      { id: 'dart-state', name: 'State Management' },
+      { id: 'dart-async', name: 'Futures & Streams' },
+      { id: 'dart-ffi', name: 'FFI' },
+    ]
+  },
+  {
+    id: 'react-native',
+    name: 'React Native',
+    topics: [
+      { id: 'rn-components', name: 'Core Components' },
+      { id: 'rn-styling', name: 'Styling' },
+      { id: 'rn-navigation', name: 'Navigation' },
+      { id: 'rn-native-modules', name: 'Native Modules' },
+    ]
+  },
+  // Systems Programming
+  {
+    id: 'c',
+    name: 'C',
+    topics: [
+        {id: 'c-pointers', name: 'Pointers & Memory'},
+        {id: 'c-structs', name: 'Structs & Unions'},
+        {id: 'c-file-io', name: 'File I/O'},
+        {id: 'c-preprocessor', name: 'Preprocessor'},
     ]
   },
   {
@@ -83,31 +140,122 @@ const initialSubjects: Subject[] = [
       {id: 'cpp-pointers', name: 'Pointers & Memory'},
       {id: 'cpp-oop', name: 'Object-Oriented Programming'},
       {id: 'cpp-stl', name: 'Standard Template Library (STL)'},
-      {id: 'cpp-concurrency', name: 'Concurrency'},
     ]
   },
+  {
+    id: 'rust',
+    name: 'Rust',
+    topics: [
+        {id: 'rust-ownership', name: 'Ownership'},
+        {id: 'rust-borrowing', name: 'Borrowing & Lifetimes'},
+        {id: 'rust-concurrency', name: 'Concurrency'},
+        {id: 'rust-macros', name: 'Macros'},
+    ]
+  },
+  // AI & Data Science
   {
     id: 'python',
     name: 'Python',
     topics: [
-      {id: 'python-basics', name: 'Data Types & Variables'},
-      {id: 'python-ds', name: 'Data Structures (Lists, Dicts)'},
-      {id: 'python-functions', name: 'Functions & Lambdas'},
-      {id: 'python-oop', name: 'Classes & Objects'},
-      {id: 'python-modules', name: 'Modules & Packages'},
-      {id: 'python-django', name: 'Django Framework'},
-      {id: 'python-flask', name: 'Flask Framework'},
+      { id: 'python-ds', name: 'Data Structures' },
+      { id: 'python-pandas', name: 'Pandas' },
+      { id: 'python-numpy', name: 'NumPy' },
+      { id: 'python-scikit', name: 'Scikit-learn' },
     ]
   },
   {
-    id: 'java',
-    name: 'Java',
+    id: 'r',
+    name: 'R',
     topics: [
-      {id: 'java-basics', name: 'Core Concepts & JVM'},
-      {id: 'java-oop', name: 'Object-Oriented Principles'},
-      {id: 'java-collections', name: 'Collections Framework'},
-      {id: 'java-concurrency', name: 'Multithreading'},
-      {id: 'java-spring', name: 'Spring Framework'},
+        {id: 'r-data-frames', name: 'Data Frames'},
+        {id: 'r-ggplot2', name: 'ggplot2'},
+        {id: 'r-dplyr', name: 'dplyr'},
+        {id: 'r-shiny', name: 'Shiny'},
+    ]
+  },
+  {
+    id: 'julia',
+    name: 'Julia',
+    topics: [
+        {id: 'julia-types', name: 'Types'},
+        {id: 'julia-metaprogramming', name: 'Metaprogramming'},
+        {id: 'julia-performance', name: 'Performance Tips'},
+        {id: 'julia-parallel', name: 'Parallel Computing'},
+    ]
+  },
+   // Game Development
+   {
+    id: 'c-sharp-unity',
+    name: 'C# (Unity)',
+    topics: [
+      { id: 'csharp-unity-scripts', name: 'Scripting Basics' },
+      { id: 'csharp-unity-physics', name: 'Physics' },
+      { id: 'csharp-unity-ui', name: 'UI Development' },
+      { id: 'csharp-unity-shaders', name: 'Shaders' },
+    ]
+  },
+  {
+    id: 'lua',
+    name: 'Lua',
+    topics: [
+        {id: 'lua-tables', name: 'Tables'},
+        {id: 'lua-coroutines', name: 'Coroutines'},
+        {id: 'lua-embedding', name: 'Embedding with C'},
+        {id: 'lua-metatables', name: 'Metatables'},
+    ]
+  },
+  // Database Languages
+  {
+    id: 'sql',
+    name: 'SQL',
+    topics: [
+        {id: 'sql-joins', name: 'JOINs'},
+        {id: 'sql-subqueries', name: 'Subqueries'},
+        {id: 'sql-aggregation', name: 'Aggregation Functions'},
+        {id: 'sql-indexing', name: 'Indexing'},
+    ]
+  },
+  {
+    id: 'graphql',
+    name: 'GraphQL',
+    topics: [
+        {id: 'graphql-schema', name: 'Schema & Types'},
+        {id: 'graphql-queries', name: 'Queries'},
+        {id: 'graphql-mutations', name: 'Mutations'},
+        {id: 'graphql-resolvers', name: 'Resolvers'},
+    ]
+  },
+  // Cloud & Infrastructure
+  {
+    id: 'go',
+    name: 'Go',
+    topics: [
+        {id: 'go-goroutines', name: 'Goroutines'},
+        {id: 'go-channels', name: 'Channels'},
+        {id: 'go-interfaces', name: 'Interfaces'},
+        {id: 'go-http', name: 'net/http'},
+    ]
+  },
+  {
+    id: 'hcl',
+    name: 'HCL (Terraform)',
+    topics: [
+        {id: 'hcl-providers', name: 'Providers'},
+        {id: 'hcl-modules', name: 'Modules'},
+        {id: 'hcl-state', name: 'State Management'},
+        {id: 'hcl-functions', name: 'Functions'},
+    ]
+  },
+  // Other
+  {
+    id: 'dsa',
+    name: 'Data Structures & Algos',
+    topics: [
+      {id: 'dsa-arrays', name: 'Arrays & Strings'},
+      {id: 'dsa-linked-lists', name: 'Linked Lists'},
+      {id: 'dsa-trees', name: 'Trees (Binary, BST)'},
+      {id: 'dsa-graphs', name: 'Graphs'},
+      {id: 'dsa-dp', name: 'Dynamic Programming'},
     ]
   },
   {
@@ -118,7 +266,6 @@ const initialSubjects: Subject[] = [
       {id: 'linux-fs', name: 'File System & Permissions'},
       {id: 'linux-shell', name: 'Shell Scripting'},
       {id: 'linux-process', name: 'Process Management'},
-      {id: 'linux-networking', name: 'Networking Tools'},
     ]
   },
   {
@@ -129,7 +276,6 @@ const initialSubjects: Subject[] = [
       {id: 'cyber-crypto', name: 'Cryptography'},
       {id: 'cyber-websec', name: 'Web App Security (OWASP)'},
       {id: 'cyber-pentest', name: 'Penetration Testing'},
-      {id: 'cyber-forensics', name: 'Digital Forensics'},
     ]
   }
 ];
