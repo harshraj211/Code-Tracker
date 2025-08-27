@@ -13,8 +13,8 @@ export default {
     extend: {
       fontFamily: {
         sans: ["var(--font-inter)", ...fontFamily.sans],
-        body: ['Inter', 'sans-serif'],
-        headline: ['Inter', 'sans-serif'],
+        body: ["var(--font-inter)", ...fontFamily.sans],
+        headline: ["var(--font-inter)", ...fontFamily.sans],
         code: ['monospace'],
       },
       colors: {
