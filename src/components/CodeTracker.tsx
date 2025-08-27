@@ -10,6 +10,7 @@ import { format } from 'date-fns';
 
 const initialSubjects: Subject[] = [
   // Web Development
+  { id: 'web-dev-category', name: 'Web Development', topics: [], isCategory: true },
   {
     id: 'html',
     name: 'HTML',
@@ -70,7 +71,9 @@ const initialSubjects: Subject[] = [
         {id: 'node-modules', name: 'Modules'},
     ]
   },
+
   // Mobile Development
+  { id: 'mobile-dev-category', name: 'Mobile Development', topics: [], isCategory: true },
   {
     id: 'java-android',
     name: 'Java (Android)',
@@ -121,7 +124,9 @@ const initialSubjects: Subject[] = [
       { id: 'rn-native-modules', name: 'Native Modules' },
     ]
   },
+
   // Systems Programming
+  { id: 'systems-prog-category', name: 'Systems Programming', topics: [], isCategory: true },
   {
     id: 'c',
     name: 'C',
@@ -152,7 +157,9 @@ const initialSubjects: Subject[] = [
         {id: 'rust-macros', name: 'Macros'},
     ]
   },
+
   // AI & Data Science
+  { id: 'ai-ds-category', name: 'AI & Data Science', topics: [], isCategory: true },
   {
     id: 'python',
     name: 'Python',
@@ -183,7 +190,9 @@ const initialSubjects: Subject[] = [
         {id: 'julia-parallel', name: 'Parallel Computing'},
     ]
   },
+
    // Game Development
+   { id: 'game-dev-category', name: 'Game Development', topics: [], isCategory: true },
    {
     id: 'c-sharp-unity',
     name: 'C# (Unity)',
@@ -204,7 +213,9 @@ const initialSubjects: Subject[] = [
         {id: 'lua-metatables', name: 'Metatables'},
     ]
   },
+
   // Database Languages
+  { id: 'db-lang-category', name: 'Database Languages', topics: [], isCategory: true },
   {
     id: 'sql',
     name: 'SQL',
@@ -225,7 +236,9 @@ const initialSubjects: Subject[] = [
         {id: 'graphql-resolvers', name: 'Resolvers'},
     ]
   },
+
   // Cloud & Infrastructure
+  { id: 'cloud-infra-category', name: 'Cloud & Infrastructure', topics: [], isCategory: true },
   {
     id: 'go',
     name: 'Go',
@@ -246,7 +259,9 @@ const initialSubjects: Subject[] = [
         {id: 'hcl-functions', name: 'Functions'},
     ]
   },
+
   // Other
+  { id: 'other-category', name: 'Other', topics: [], isCategory: true },
   {
     id: 'dsa',
     name: 'Data Structures & Algos',
@@ -283,7 +298,7 @@ const initialSubjects: Subject[] = [
 export function CodeTracker() {
   const [subjects, setSubjects] = useLocalStorage<Subject[]>('subjects', initialSubjects);
   const [tasks, setTasks] = useLocalStorage<Task[]>('tasks', []);
-  const [activeSubjectId, setActiveSubjectId] = useState<string | null>(initialSubjects[0]?.id || null);
+  const [activeSubjectId, setActiveSubjectId] = useState<string | null>(initialSubjects.find(s => !s.isCategory)?.id || null);
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
 
   const activeSubject = useMemo(() => subjects.find(s => s.id === activeSubjectId), [subjects, activeSubjectId]);

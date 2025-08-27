@@ -9,6 +9,7 @@ import {
   SidebarMenuItem,
   SidebarMenuButton,
   SidebarFooter,
+  SidebarSeparator,
 } from '@/components/ui/sidebar';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from '@/components/ui/dialog';
@@ -61,18 +62,27 @@ export function TrackerSidebar({ subjects, activeSubjectId, setActiveSubjectId, 
       </SidebarHeader>
       <SidebarContent>
         <SidebarMenu>
-          {subjects.map((subject) => (
-            <SidebarMenuItem key={subject.id}>
-              <SidebarMenuButton
-                onClick={() => setActiveSubjectId(subject.id)}
-                isActive={activeSubjectId === subject.id}
-                className="justify-start"
-              >
-                <Book className="w-4 h-4" />
-                <span>{subject.name}</span>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-          ))}
+          {subjects.map((subject, index) =>
+            subject.isCategory ? (
+              <React.Fragment key={subject.id}>
+                {index > 0 && <SidebarSeparator className="my-1" />}
+                <div className="px-3 py-2 text-xs font-semibold text-muted-foreground tracking-wider uppercase">
+                  {subject.name}
+                </div>
+              </React.Fragment>
+            ) : (
+              <SidebarMenuItem key={subject.id}>
+                <SidebarMenuButton
+                  onClick={() => setActiveSubjectId(subject.id)}
+                  isActive={activeSubjectId === subject.id}
+                  className="justify-start"
+                >
+                  <Book className="w-4 h-4" />
+                  <span>{subject.name}</span>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+            )
+          )}
         </SidebarMenu>
       </SidebarContent>
       <SidebarFooter>

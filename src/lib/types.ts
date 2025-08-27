@@ -16,4 +16,5 @@ export interface Subject {
   id: string;
   name: string;
   topics: Topic[];
+  isCategory?: boolean;
 }
