@@ -16,7 +16,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, Dialog
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import type { Subject } from '@/lib/types';
-import { Book, PlusCircle } from 'lucide-react';
+import { Book, PlusCircle, Code } from 'lucide-react';
 
 interface TrackerSidebarProps {
   subjects: Subject[];
@@ -65,7 +65,7 @@ export function TrackerSidebar({ subjects, activeSubjectId, setActiveSubjectId, 
           {subjects.map((subject, index) =>
             subject.isCategory ? (
               <React.Fragment key={subject.id}>
-                {index > 0 && <SidebarSeparator className="my-1" />}
+                {index > 0 && <SidebarSeparator className="my-2" />}
                 <div className="px-3 py-2 text-xs font-semibold text-muted-foreground tracking-wider uppercase">
                   {subject.name}
                 </div>
@@ -77,7 +77,7 @@ export function TrackerSidebar({ subjects, activeSubjectId, setActiveSubjectId, 
                   isActive={activeSubjectId === subject.id}
                   className="justify-start"
                 >
-                  <Book className="w-4 h-4" />
+                  <Code className="w-4 h-4" />
                   <span>{subject.name}</span>
                 </SidebarMenuButton>
               </SidebarMenuItem>
@@ -120,5 +120,3 @@ export function TrackerSidebar({ subjects, activeSubjectId, setActiveSubjectId, 
     </Sidebar>
   );
 }
-
-    

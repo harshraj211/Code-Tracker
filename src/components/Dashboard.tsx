@@ -35,11 +35,11 @@ export function Dashboard({
 }: DashboardProps) {
 
   return (
-    <SidebarInset className="flex-1 p-4 md:p-6 lg:p-8">
+    <SidebarInset className="flex-1 p-4 md:p-6 lg:p-8 bg-secondary/40">
       <header className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-4">
           <SidebarTrigger className="md:hidden" />
-          <h1 className="text-3xl font-bold">{activeSubject?.name || 'CodeTracker'}</h1>
+          <h1 className="text-2xl md:text-3xl font-bold text-foreground">{activeSubject?.name || 'CodeTracker'}</h1>
         </div>
         <div className="flex items-center gap-4">
           {activeSubject && <StreakCounter tasks={tasks} subjectId={activeSubject.id} />}
@@ -49,13 +49,13 @@ export function Dashboard({
       
       {!activeSubject ? (
          <div className="flex items-center justify-center h-[calc(100vh-12rem)]">
-            <div className="text-center">
+            <div className="text-center bg-background p-8 rounded-lg shadow-sm">
                 <h2 className="text-2xl font-semibold mb-2">Welcome to CodeTracker</h2>
-                <p className="text-muted-foreground">Select a subject from the sidebar to start, or add a new one.</p>
+                <p className="text-muted-foreground">Select a subject from the sidebar to start tracking your progress.</p>
             </div>
          </div>
       ) : (
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <main className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             <div className="lg:col-span-2 space-y-6">
                 <TaskList
                     key={`${activeSubject.id}-${selectedDate.toISOString()}`}
@@ -69,12 +69,12 @@ export function Dashboard({
                 />
             </div>
 
-            <div className="space-y-6 lg:col-span-1">
-            <Card>
+            <aside className="space-y-6 lg:col-span-1">
+            <Card className="shadow-sm">
                 <CardHeader>
-                <CardTitle>Calendar</CardTitle>
+                <CardTitle className="text-xl">Calendar</CardTitle>
                 </CardHeader>
-                <CardContent>
+                <CardContent className="flex justify-center">
                 <CalendarView
                     tasks={tasks}
                     selectedDate={selectedDate}
@@ -84,16 +84,16 @@ export function Dashboard({
                 </CardContent>
             </Card>
             
-            <Card>
+            <Card className="shadow-sm">
                 <CardHeader>
-                <CardTitle>Weekly Progress</CardTitle>
+                <CardTitle className="text-xl">Weekly Progress</CardTitle>
                 </CardHeader>
                 <CardContent>
                 <ProgressChart tasks={tasks} subjectId={activeSubject.id} />
                 </CardContent>
             </Card>
-            </div>
-        </div>
+            </aside>
+        </main>
       )}
 
     </SidebarInset>
