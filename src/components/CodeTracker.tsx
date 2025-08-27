@@ -9,7 +9,7 @@ import type { Subject, Task } from '@/lib/types';
 import { format } from 'date-fns';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { db } from '@/lib/firebase';
-import { collection, onSnapshot, addDoc, updateDoc, deleteDoc, doc, query, orderBy, where } from 'firebase/firestore';
+import { collection, onSnapshot, addDoc, updateDoc, deleteDoc, doc, query, orderBy, where, getDocs, writeBatch } from 'firebase/firestore';
 import { useAuth } from './providers/auth-provider';
 
 const initialSubjects: Subject[] = [
@@ -382,42 +382,63 @@ export function CodeTracker() {
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const isMobile = useIsMobile();
   
-  const subjectsCollectionRef = user ? collection(db, 'users', user.uid, 'subjects') : null;
-  const tasksCollectionRef = user ? collection(db, 'users', user.uid, 'tasks') : null;
-
   useEffect(() => {
-    if (!user || !subjectsCollectionRef) {
+    if (!user) {
       setSubjects(initialSubjects);
       setTasks([]);
       setActiveSubjectId(null);
       return;
-    };
-    
-    const q = query(subjectsCollectionRef, orderBy('name'));
-    const unsubscribe = onSnapshot(q, (querySnapshot) => {
-      const storedSubjects = querySnapshot.docs.map(doc => ({...doc.data(), id: doc.id}))  as Subject[];
-      const allSubjects = [...initialSubjects, ...storedSubjects.filter(ss => !initialSubjects.some(is => is.id === ss.id))];
-      setSubjects(allSubjects);
-    });
-    return () => unsubscribe();
-  }, [user, subjectsCollectionRef]);
+    }
 
-   useEffect(() => {
-    if (!user || !tasksCollectionRef) {
-      setTasks([]);
-      return;
-    };
-    const q = query(tasksCollectionRef);
-    const unsubscribe = onSnapshot(q, (querySnapshot) => {
-      const tasksData = querySnapshot.docs.map(doc => ({...doc.data(), id: doc.id})) as Task[];
+    const subjectsCollectionRef = collection(db, 'users', user.uid, 'subjects');
+    const q = query(subjectsCollectionRef, orderBy('name'));
+
+    const unsubscribeSubjects = onSnapshot(q, async (querySnapshot) => {
+      const storedSubjects: Subject[] = [];
+      querySnapshot.forEach((doc) => {
+        storedSubjects.push({ ...(doc.data() as Omit<Subject, 'id'>), id: doc.id });
+      });
+
+      if (storedSubjects.length === 0) {
+        // First-time user, seed the initial subjects
+        const batch = writeBatch(db);
+        initialSubjects.forEach(subject => {
+            if (!subject.isCategory) { // Don't store categories in DB
+                const docRef = doc(subjectsCollectionRef, subject.id);
+                batch.set(docRef, { name: subject.name, topics: subject.topics });
+            }
+        });
+        await batch.commit();
+      } else {
+        const allSubjects = [...initialSubjects.filter(s => s.isCategory), ...storedSubjects];
+        // simple sort to put categories first
+        allSubjects.sort((a,b) => {
+            if (a.isCategory && !b.isCategory) return -1;
+            if (!a.isCategory && b.isCategory) return 1;
+            return 0;
+        })
+        setSubjects(allSubjects);
+      }
+    });
+
+    const tasksCollectionRef = collection(db, 'users', user.uid, 'tasks');
+    const unsubscribeTasks = onSnapshot(query(tasksCollectionRef), (querySnapshot) => {
+      const tasksData: Task[] = [];
+      querySnapshot.forEach((doc) => {
+        tasksData.push({ ...(doc.data() as Omit<Task, 'id'>), id: doc.id });
+      });
       setTasks(tasksData);
     });
-    return () => unsubscribe();
-  }, [user, tasksCollectionRef]);
+
+    return () => {
+      unsubscribeSubjects();
+      unsubscribeTasks();
+    };
+  }, [user]);
 
   useEffect(() => {
     if (user && activeSubjectId === null && !isMobile) {
-      setActiveSubjectId('html');
+      // setActiveSubjectId('html'); // Let's not default to html anymore
     } else if (!user) {
       setActiveSubjectId(null);
     }
@@ -426,27 +447,28 @@ export function CodeTracker() {
 
   useEffect(() => {
     // On mobile, if a subject is active, we want to set it to null so the user has to re-select
-    // which also causes the sidebar to close automatically.
-    if (isMobile && activeSubjectId) {
+    // which also causes the sidebar to close automatically. This is a bit of a hacky way to close the sidebar.
+    if (isMobile) {
       setActiveSubjectId(null);
     }
-  }, [isMobile, activeSubjectId]);
+  }, [isMobile]);
 
   const activeSubject = useMemo(() => subjects.find(s => s.id === activeSubjectId), [subjects, activeSubjectId]);
   
   const addSubject = async (name: string) => {
-    if (!subjectsCollectionRef) return;
-    const newSubject: Omit<Subject, 'id'> = {
-      id: name.toLowerCase().replace(/\s+/g, '-'),
+    if (!user) return;
+    const subjectsCollectionRef = collection(db, 'users', user.uid, 'subjects');
+    const newSubjectData = {
       name,
       topics: [],
     };
-    const docRef = await addDoc(subjectsCollectionRef, newSubject);
+    const docRef = await addDoc(subjectsCollectionRef, newSubjectData);
     setActiveSubjectId(docRef.id);
   };
   
   const addTask = async (text: string, subjectId: string, topicId?: string) => {
-    if (!tasksCollectionRef) return;
+    if (!user) return;
+    const tasksCollectionRef = collection(db, 'users', user.uid, 'tasks');
     await addDoc(tasksCollectionRef, {
       text,
       completed: false,
@@ -507,3 +529,5 @@ export function CodeTracker() {
     </SidebarProvider>
   );
 }
+
+    
