@@ -23,14 +23,15 @@ interface TrackerSidebarProps {
   activeSubjectId: string | null;
   setActiveSubjectId: (id: string | null) => void;
   addSubject: (name: string) => void;
+  isMobile: boolean;
 }
 
-function SidebarContentAndFooter({
+export function TrackerSidebarContent({
   subjects,
   activeSubjectId,
   setActiveSubjectId,
   addSubject,
-}: Omit<TrackerSidebarProps, 'mobile'>) {
+}: Omit<TrackerSidebarProps, 'isMobile'>) {
   const [newSubjectName, setNewSubjectName] = useState('');
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
@@ -127,15 +128,14 @@ function SidebarContentAndFooter({
 }
 
 
-export function TrackerSidebar({ subjects, activeSubjectId, setActiveSubjectId, addSubject }: TrackerSidebarProps) {
+export function TrackerSidebar(props: TrackerSidebarProps) {
+  if (props.isMobile) {
+    return <TrackerSidebarContent {...props} />;
+  }
+
   return (
     <Sidebar>
-       <SidebarContentAndFooter 
-        subjects={subjects}
-        activeSubjectId={activeSubjectId}
-        setActiveSubjectId={setActiveSubjectId}
-        addSubject={addSubject}
-       />
+       <TrackerSidebarContent {...props} />
     </Sidebar>
   );
 }

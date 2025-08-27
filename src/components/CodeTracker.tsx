@@ -1,10 +1,11 @@
 "use client";
 
 import React from 'react';
-import { SidebarProvider } from '@/components/ui/sidebar';
-import { TrackerSidebar } from '@/components/TrackerSidebar';
+import { SidebarProvider, Sidebar, SidebarTrigger } from '@/components/ui/sidebar';
+import { TrackerSidebarContent } from '@/components/TrackerSidebar';
 import { Dashboard } from '@/components/Dashboard';
 import type { Subject, Task } from '@/lib/types';
+import { Sheet, SheetContent } from '@/components/ui/sheet';
 
 interface CodeTrackerProps {
   subjects: Subject[];
@@ -38,26 +39,42 @@ export function CodeTracker({
   
   return (
     <SidebarProvider>
-      <div className="flex min-h-screen bg-background">
-        <TrackerSidebar
-          subjects={subjects}
-          activeSubjectId={activeSubjectId}
-          setActiveSubjectId={setActiveSubjectId}
-          addSubject={addSubject}
-        />
-        <Dashboard
-          key={activeSubjectId}
-          subjects={subjects}
-          activeSubject={activeSubject}
-          tasks={tasks}
-          selectedDate={selectedDate}
-          setSelectedDate={setSelectedDate}
-          onAddTask={addTask}
-          onToggleTask={toggleTask}
-          onDeleteTask={deleteTask}
-          onAddTopic={addTopic}
-        />
-      </div>
+       <Sheet>
+        <div className="flex min-h-screen bg-background">
+          <Sidebar>
+            <SheetContent className="w-72 p-0">
+              <TrackerSidebarContent
+                subjects={subjects}
+                activeSubjectId={activeSubjectId}
+                setActiveSubjectId={setActiveSubjectId}
+                addSubject={addSubject}
+                isMobile={true}
+              />
+            </SheetContent>
+            <div className="hidden md:flex">
+              <TrackerSidebarContent
+                subjects={subjects}
+                activeSubjectId={activeSubjectId}
+                setActiveSubjectId={setActiveSubjectId}
+                addSubject={addSubject}
+                isMobile={false}
+              />
+            </div>
+          </Sidebar>
+          <Dashboard
+            key={activeSubjectId}
+            subjects={subjects}
+            activeSubject={activeSubject}
+            tasks={tasks}
+            selectedDate={selectedDate}
+            setSelectedDate={setSelectedDate}
+            onAddTask={addTask}
+            onToggleTask={toggleTask}
+            onDeleteTask={deleteTask}
+            onAddTopic={addTopic}
+          />
+        </div>
+      </Sheet>
     </SidebarProvider>
   );
 }
