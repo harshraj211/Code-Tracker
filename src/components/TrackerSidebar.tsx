@@ -2,7 +2,6 @@
 
 import React, { useState } from 'react';
 import {
-  SidebarContent as SidebarMainContent,
   SidebarHeader,
   SidebarMenu,
   SidebarMenuItem,
@@ -65,8 +64,7 @@ export function TrackerSidebarContent({
           <h1 className="text-xl font-semibold">CodeTracker</h1>
         </div>
       </SidebarHeader>
-      <SidebarMainContent className="p-0">
-        <ScrollArea className="h-full">
+      <ScrollArea className="flex-1">
           <SidebarMenu className="p-2">
             {subjects.map((subject, index) =>
               subject.isCategory ? (
@@ -90,8 +88,7 @@ export function TrackerSidebarContent({
               )
             )}
           </SidebarMenu>
-        </ScrollArea>
-      </SidebarMainContent>
+      </ScrollArea>
       <SidebarFooter>
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
           <DialogTrigger asChild>
