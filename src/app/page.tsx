@@ -1,5 +1,6 @@
-import { CodeTracker } from "@/components/CodeTracker";
+"use client";
+import { CodeTrackerClient } from "@/components/CodeTrackerClient";
 
 export default function Home() {
-  return <CodeTracker />;
+  return <CodeTrackerClient />;
 }
