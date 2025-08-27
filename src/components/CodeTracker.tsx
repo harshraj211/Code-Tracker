@@ -377,14 +377,19 @@ export function CodeTracker() {
   const [activeSubjectId, setActiveSubjectId] = useState<string | null>(null);
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const isMobile = useIsMobile();
-  
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
+
   useEffect(() => {
     // On mobile, if a subject is active, we want to set it to null so the user has to re-select
     // which also causes the sidebar to close automatically. This is a bit of a hacky way to close the sidebar.
-    if (isMobile && activeSubjectId) {
+    if (isClient && isMobile && activeSubjectId) {
       setActiveSubjectId(null);
     }
-  }, [isMobile, activeSubjectId]);
+  }, [isClient, isMobile, activeSubjectId]);
 
   const activeSubject = useMemo(() => subjects.find(s => s.id === activeSubjectId), [subjects, activeSubjectId]);
   
@@ -433,6 +438,10 @@ export function CodeTracker() {
         })
     );
   };
+
+  if (!isClient) {
+    return null; // or a loading spinner
+  }
 
   return (
     <SidebarProvider>
