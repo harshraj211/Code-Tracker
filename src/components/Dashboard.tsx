@@ -55,8 +55,8 @@ export function Dashboard({
             </div>
          </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="md:col-span-2 space-y-6">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div className="lg:col-span-2 space-y-6">
                 <TaskList
                     key={`${activeSubject.id}-${selectedDate.toISOString()}`}
                     activeSubject={activeSubject}
@@ -69,7 +69,7 @@ export function Dashboard({
                 />
             </div>
 
-            <div className="space-y-6 md:col-span-1">
+            <div className="space-y-6 lg:col-span-1">
             <Card>
                 <CardHeader>
                 <CardTitle>Calendar</CardTitle>
@@ -99,3 +99,5 @@ export function Dashboard({
     </SidebarInset>
   );
 }
+
+    

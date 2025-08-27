@@ -107,6 +107,7 @@ export function TrackerSidebar({ subjects, activeSubjectId, setActiveSubjectId, 
                   onChange={(e) => setNewSubjectName(e.target.value)}
                   className="col-span-3"
                   placeholder="e.g. System Design"
+                  onKeyDown={(e) => e.key === 'Enter' && handleAddSubject()}
                 />
               </div>
             </div>
@@ -119,3 +120,5 @@ export function TrackerSidebar({ subjects, activeSubjectId, setActiveSubjectId, 
     </Sidebar>
   );
 }
+
+    

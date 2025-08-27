@@ -2,7 +2,7 @@
 
 import React, { useMemo } from 'react';
 import type { Task } from '@/lib/types';
-import { format, subDays, differenceInCalendarDays, parseISO } from 'date-fns';
+import { differenceInCalendarDays, parseISO } from 'date-fns';
 import { Flame } from 'lucide-react';
 import { Badge } from './ui/badge';
 
@@ -52,3 +52,5 @@ export function StreakCounter({ tasks }: StreakCounterProps) {
     </Badge>
   );
 }
+
+    
