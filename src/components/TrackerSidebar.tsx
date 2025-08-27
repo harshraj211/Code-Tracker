@@ -42,7 +42,7 @@ export function TrackerSidebarContent({
   };
 
   return (
-    <>
+    <div className="h-full flex flex-col">
       <SidebarHeader>
         <div className="flex items-center gap-2">
             <svg
@@ -121,6 +121,6 @@ export function TrackerSidebarContent({
           </DialogContent>
         </Dialog>
       </SidebarFooter>
-    </>
+    </div>
   );
 }
