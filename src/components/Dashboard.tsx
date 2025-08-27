@@ -9,6 +9,7 @@ import { ThemeToggle } from './ThemeToggle';
 import { ProgressChart } from './ProgressChart';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import { SidebarInset, SidebarTrigger } from './ui/sidebar';
+import { CheckCircle, ListPlus, Flame } from 'lucide-react';
 
 interface DashboardProps {
   subjects: Subject[];
@@ -49,10 +50,32 @@ export function Dashboard({
       
       {!activeSubject ? (
          <div className="flex items-center justify-center h-[calc(100vh-12rem)]">
-            <div className="text-center bg-background p-8 rounded-lg shadow-sm">
-                <h2 className="text-2xl font-semibold mb-2">Welcome to CodeTracker</h2>
-                <p className="text-muted-foreground">Select a subject from the sidebar to start tracking your progress.</p>
-            </div>
+            <Card className="w-full max-w-2xl shadow-lg">
+              <CardHeader>
+                <CardTitle className="text-3xl font-bold text-center">Welcome to CodeTracker!</CardTitle>
+              </CardHeader>
+              <CardContent className="text-center">
+                <p className="text-muted-foreground mb-8">Your personal dashboard to build a consistent coding habit.</p>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-left">
+                  <div className="flex flex-col items-center text-center p-4 rounded-lg bg-background">
+                    <ListPlus className="h-10 w-10 text-primary mb-3" />
+                    <h3 className="font-semibold mb-1">Step 1: Add a Subject</h3>
+                    <p className="text-sm text-muted-foreground">Use the sidebar to create a tracker for any language or topic.</p>
+                  </div>
+                  <div className="flex flex-col items-center text-center p-4 rounded-lg bg-background">
+                    <CheckCircle className="h-10 w-10 text-primary mb-3" />
+                    <h3 className="font-semibold mb-1">Step 2: Track Daily Tasks</h3>
+                    <p className="text-sm text-muted-foreground">Add and complete tasks for each day to log your progress.</p>
+                  </div>
+                  <div className="flex flex-col items-center text-center p-4 rounded-lg bg-background">
+                    <Flame className="h-10 w-10 text-primary mb-3" />
+                    <h3 className="font-semibold mb-1">Step 3: Build a Streak</h3>
+                    <p className="text-sm text-muted-foreground">Stay consistent to build a daily learning streak for each subject.</p>
+                  </div>
+                </div>
+                <p className="mt-8 text-muted-foreground">Select a subject from the sidebar to get started!</p>
+              </CardContent>
+            </Card>
          </div>
       ) : (
         <main className="grid grid-cols-1 lg:grid-cols-3 gap-6">
