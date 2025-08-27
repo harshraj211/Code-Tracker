@@ -16,6 +16,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import type { Subject } from '@/lib/types';
 import { PlusCircle, Code } from 'lucide-react';
+import { ScrollArea } from './ui/scroll-area';
 
 interface TrackerSidebarContentProps {
   subjects: Subject[];
@@ -65,6 +66,7 @@ export function TrackerSidebarContent({
         </div>
       </SidebarHeader>
       <SidebarMainContent className="p-0">
+        <ScrollArea className="h-full">
           <SidebarMenu className="p-2">
             {subjects.map((subject, index) =>
               subject.isCategory ? (
@@ -88,6 +90,7 @@ export function TrackerSidebarContent({
               )
             )}
           </SidebarMenu>
+        </ScrollArea>
       </SidebarMainContent>
       <SidebarFooter>
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
