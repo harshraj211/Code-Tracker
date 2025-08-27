@@ -16,7 +16,9 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, Dialog
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import type { Subject } from '@/lib/types';
-import { Book, PlusCircle, Code } from 'lucide-react';
+import { Book, PlusCircle, Code, LogOut } from 'lucide-react';
+import { useAuth } from './providers/auth-provider';
+import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 
 interface TrackerSidebarProps {
   subjects: Subject[];
@@ -26,11 +28,12 @@ interface TrackerSidebarProps {
 }
 
 export function TrackerSidebar({ subjects, activeSubjectId, setActiveSubjectId, addSubject }: TrackerSidebarProps) {
+  const { user, signOut } = useAuth();
   const [newSubjectName, setNewSubjectName] = useState('');
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   const handleAddSubject = () => {
-    if (newSubjectName.trim()) {
+    if (newSubjectName.trim() && user) {
       addSubject(newSubjectName.trim());
       setNewSubjectName('');
       setIsDialogOpen(false);
@@ -61,61 +64,81 @@ export function TrackerSidebar({ subjects, activeSubjectId, setActiveSubjectId, 
         </div>
       </SidebarHeader>
       <SidebarContent>
-        <SidebarMenu>
-          {subjects.map((subject, index) =>
-            subject.isCategory ? (
-              <React.Fragment key={subject.id}>
-                {index > 0 && <SidebarSeparator className="my-2" />}
-                <div className="px-3 py-2 text-xs font-semibold text-muted-foreground tracking-wider uppercase">
-                  {subject.name}
-                </div>
-              </React.Fragment>
-            ) : (
-              <SidebarMenuItem key={subject.id}>
-                <SidebarMenuButton
-                  onClick={() => setActiveSubjectId(subject.id)}
-                  isActive={activeSubjectId === subject.id}
-                  className="justify-start"
-                >
-                  <Code className="w-4 h-4" />
-                  <span>{subject.name}</span>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-            )
-          )}
-        </SidebarMenu>
+        {user && (
+          <SidebarMenu>
+            {subjects.map((subject, index) =>
+              subject.isCategory ? (
+                <React.Fragment key={subject.id}>
+                  {index > 0 && <SidebarSeparator className="my-2" />}
+                  <div className="px-3 py-2 text-xs font-semibold text-muted-foreground tracking-wider uppercase">
+                    {subject.name}
+                  </div>
+                </React.Fragment>
+              ) : (
+                <SidebarMenuItem key={subject.id}>
+                  <SidebarMenuButton
+                    onClick={() => setActiveSubjectId(subject.id)}
+                    isActive={activeSubjectId === subject.id}
+                    className="justify-start"
+                  >
+                    <Code className="w-4 h-4" />
+                    <span>{subject.name}</span>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              )
+            )}
+          </SidebarMenu>
+        )}
       </SidebarContent>
       <SidebarFooter>
-        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-          <DialogTrigger asChild>
-            <Button variant="ghost" className="w-full justify-start">
-              <PlusCircle className="mr-2 h-4 w-4" /> Add Subject
-            </Button>
-          </DialogTrigger>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Add New Subject</DialogTitle>
-            </DialogHeader>
-            <div className="grid gap-4 py-4">
-              <div className="grid grid-cols-4 items-center gap-4">
-                <Label htmlFor="name" className="text-right">
-                  Name
-                </Label>
-                <Input
-                  id="name"
-                  value={newSubjectName}
-                  onChange={(e) => setNewSubjectName(e.target.value)}
-                  className="col-span-3"
-                  placeholder="e.g. System Design"
-                  onKeyDown={(e) => e.key === 'Enter' && handleAddSubject()}
-                />
+        {user ? (
+          <>
+            <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+              <DialogTrigger asChild>
+                <Button variant="ghost" className="w-full justify-start">
+                  <PlusCircle className="mr-2 h-4 w-4" /> Add Subject
+                </Button>
+              </DialogTrigger>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>Add New Subject</DialogTitle>
+                </DialogHeader>
+                <div className="grid gap-4 py-4">
+                  <div className="grid grid-cols-4 items-center gap-4">
+                    <Label htmlFor="name" className="text-right">
+                      Name
+                    </Label>
+                    <Input
+                      id="name"
+                      value={newSubjectName}
+                      onChange={(e) => setNewSubjectName(e.target.value)}
+                      className="col-span-3"
+                      placeholder="e.g. System Design"
+                      onKeyDown={(e) => e.key === 'Enter' && handleAddSubject()}
+                    />
+                  </div>
+                </div>
+                <DialogFooter>
+                  <Button type="submit" onClick={handleAddSubject}>Create Subject</Button>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
+            <SidebarSeparator />
+            <div className="flex items-center gap-3 p-2">
+              <Avatar className="h-9 w-9">
+                <AvatarImage src={user.photoURL || ''} alt={user.displayName || ''} />
+                <AvatarFallback>{user.displayName?.charAt(0) || 'U'}</AvatarFallback>
+              </Avatar>
+              <div className="flex-1 overflow-hidden">
+                <p className="text-sm font-semibold truncate">{user.displayName}</p>
+                <p className="text-xs text-muted-foreground truncate">{user.email}</p>
               </div>
+              <Button variant="ghost" size="icon" onClick={signOut} className="h-9 w-9">
+                <LogOut className="h-5 w-5" />
+              </Button>
             </div>
-            <DialogFooter>
-              <Button type="submit" onClick={handleAddSubject}>Create Subject</Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
+          </>
+        ) : null}
       </SidebarFooter>
     </Sidebar>
   );

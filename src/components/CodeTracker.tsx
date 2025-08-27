@@ -10,6 +10,7 @@ import { format } from 'date-fns';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { db } from '@/lib/firebase';
 import { collection, onSnapshot, addDoc, updateDoc, deleteDoc, doc, query, orderBy, where } from 'firebase/firestore';
+import { useAuth } from './providers/auth-provider';
 
 const initialSubjects: Subject[] = [
   // Web Development
@@ -374,18 +375,24 @@ const initialSubjects: Subject[] = [
 ];
 
 export function CodeTracker() {
+  const { user } = useAuth();
   const [subjects, setSubjects] = useState<Subject[]>(initialSubjects);
   const [tasks, setTasks] = useState<Task[]>([]);
   const [activeSubjectId, setActiveSubjectId] = useState<string | null>(null);
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const isMobile = useIsMobile();
   
-  // Ref for the subjects collection
-  const subjectsCollectionRef = collection(db, 'subjects');
-  const tasksCollectionRef = collection(db, 'tasks');
+  const subjectsCollectionRef = user ? collection(db, 'users', user.uid, 'subjects') : null;
+  const tasksCollectionRef = user ? collection(db, 'users', user.uid, 'tasks') : null;
 
-  // Fetch subjects from firestore
   useEffect(() => {
+    if (!user || !subjectsCollectionRef) {
+      setSubjects(initialSubjects);
+      setTasks([]);
+      setActiveSubjectId(null);
+      return;
+    };
+    
     const q = query(subjectsCollectionRef, orderBy('name'));
     const unsubscribe = onSnapshot(q, (querySnapshot) => {
       const storedSubjects = querySnapshot.docs.map(doc => ({...doc.data(), id: doc.id}))  as Subject[];
@@ -393,17 +400,29 @@ export function CodeTracker() {
       setSubjects(allSubjects);
     });
     return () => unsubscribe();
-  }, []);
+  }, [user, subjectsCollectionRef]);
 
-  // Fetch tasks from firestore
    useEffect(() => {
+    if (!user || !tasksCollectionRef) {
+      setTasks([]);
+      return;
+    };
     const q = query(tasksCollectionRef);
     const unsubscribe = onSnapshot(q, (querySnapshot) => {
       const tasksData = querySnapshot.docs.map(doc => ({...doc.data(), id: doc.id})) as Task[];
       setTasks(tasksData);
     });
     return () => unsubscribe();
-  }, []);
+  }, [user, tasksCollectionRef]);
+
+  useEffect(() => {
+    if (user && activeSubjectId === null && !isMobile) {
+      setActiveSubjectId('html');
+    } else if (!user) {
+      setActiveSubjectId(null);
+    }
+  }, [user, isMobile, activeSubjectId]);
+
 
   useEffect(() => {
     // On mobile, if a subject is active, we want to set it to null so the user has to re-select
@@ -411,11 +430,12 @@ export function CodeTracker() {
     if (isMobile && activeSubjectId) {
       setActiveSubjectId(null);
     }
-  }, [isMobile]);
+  }, [isMobile, activeSubjectId]);
 
   const activeSubject = useMemo(() => subjects.find(s => s.id === activeSubjectId), [subjects, activeSubjectId]);
   
   const addSubject = async (name: string) => {
+    if (!subjectsCollectionRef) return;
     const newSubject: Omit<Subject, 'id'> = {
       id: name.toLowerCase().replace(/\s+/g, '-'),
       name,
@@ -426,6 +446,7 @@ export function CodeTracker() {
   };
   
   const addTask = async (text: string, subjectId: string, topicId?: string) => {
+    if (!tasksCollectionRef) return;
     await addDoc(tasksCollectionRef, {
       text,
       completed: false,
@@ -436,22 +457,25 @@ export function CodeTracker() {
   };
 
   const toggleTask = async (taskId: string) => {
+    if (!user) return;
     const task = tasks.find(t => t.id === taskId);
     if (task) {
-      const taskDocRef = doc(db, 'tasks', taskId);
+      const taskDocRef = doc(db, 'users', user.uid, 'tasks', taskId);
       await updateDoc(taskDocRef, { completed: !task.completed });
     }
   };
 
   const deleteTask = async (taskId: string) => {
-    const taskDocRef = doc(db, 'tasks', taskId);
+    if (!user) return;
+    const taskDocRef = doc(db, 'users', user.uid, 'tasks', taskId);
     await deleteDoc(taskDocRef);
   };
   
   const addTopic = async (subjectId: string, topicName: string) => {
+    if (!user) return;
     const subject = subjects.find(s => s.id === subjectId);
     if(subject && !subject.isCategory) {
-        const subjectDocRef = doc(db, 'subjects', subjectId);
+        const subjectDocRef = doc(db, 'users', user.uid, 'subjects', subjectId);
         const newTopic = { id: crypto.randomUUID(), name: topicName };
         const updatedTopics = [...subject.topics, newTopic];
         await updateDoc(subjectDocRef, { topics: updatedTopics });
