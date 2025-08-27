@@ -25,7 +25,12 @@ interface TrackerSidebarProps {
   addSubject: (name: string) => void;
 }
 
-export function TrackerSidebar({ subjects, activeSubjectId, setActiveSubjectId, addSubject }: TrackerSidebarProps) {
+function SidebarContentAndFooter({
+  subjects,
+  activeSubjectId,
+  setActiveSubjectId,
+  addSubject,
+}: Omit<TrackerSidebarProps, 'mobile'>) {
   const [newSubjectName, setNewSubjectName] = useState('');
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
@@ -38,7 +43,7 @@ export function TrackerSidebar({ subjects, activeSubjectId, setActiveSubjectId, 
   };
 
   return (
-    <Sidebar>
+    <>
       <SidebarHeader>
         <div className="flex items-center gap-2">
             <svg
@@ -117,6 +122,20 @@ export function TrackerSidebar({ subjects, activeSubjectId, setActiveSubjectId, 
           </DialogContent>
         </Dialog>
       </SidebarFooter>
+    </>
+  );
+}
+
+
+export function TrackerSidebar({ subjects, activeSubjectId, setActiveSubjectId, addSubject }: TrackerSidebarProps) {
+  return (
+    <Sidebar>
+       <SidebarContentAndFooter 
+        subjects={subjects}
+        activeSubjectId={activeSubjectId}
+        setActiveSubjectId={setActiveSubjectId}
+        addSubject={addSubject}
+       />
     </Sidebar>
   );
 }
