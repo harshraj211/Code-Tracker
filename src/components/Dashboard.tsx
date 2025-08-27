@@ -32,14 +32,14 @@ export function Dashboard({
   onAddTask,
   onToggleTask,
   onDeleteTask,
-  onAddTopic
+  onAddTopic,
 }: DashboardProps) {
 
   return (
     <SidebarInset className="flex-1 p-4 md:p-6 lg:p-8 bg-secondary/40">
       <header className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-4">
-          <SidebarTrigger />
+          <SidebarTrigger className="md:hidden" />
           <h1 className="text-2xl md:text-3xl font-bold text-foreground">{activeSubject?.name || 'CodeTracker'}</h1>
         </div>
         <div className="flex items-center gap-4">

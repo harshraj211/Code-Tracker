@@ -1,11 +1,11 @@
 "use client";
 
 import React from 'react';
-import { SidebarProvider, Sidebar, SidebarTrigger } from '@/components/ui/sidebar';
+import { Sidebar } from '@/components/ui/sidebar';
 import { TrackerSidebarContent } from '@/components/TrackerSidebar';
 import { Dashboard } from '@/components/Dashboard';
 import type { Subject, Task } from '@/lib/types';
-import { Sheet, SheetContent } from '@/components/ui/sheet';
+import { SheetContent } from '@/components/ui/sheet';
 
 interface CodeTrackerProps {
   subjects: Subject[];
@@ -38,31 +38,25 @@ export function CodeTracker({
 }: CodeTrackerProps) {
   
   return (
-    <SidebarProvider>
-       <Sheet>
-        <div className="flex min-h-screen bg-background">
-          <Sidebar>
-            <SheetContent className="w-72 p-0">
-              <TrackerSidebarContent
-                subjects={subjects}
-                activeSubjectId={activeSubjectId}
-                setActiveSubjectId={setActiveSubjectId}
-                addSubject={addSubject}
-                isMobile={true}
-              />
-            </SheetContent>
-            <div className="hidden md:flex">
-              <TrackerSidebarContent
-                subjects={subjects}
-                activeSubjectId={activeSubjectId}
-                setActiveSubjectId={setActiveSubjectId}
-                addSubject={addSubject}
-                isMobile={false}
-              />
-            </div>
+      <div className="flex min-h-screen bg-background">
+          <Sidebar className="hidden md:flex md:flex-col">
+            <TrackerSidebarContent
+              subjects={subjects}
+              activeSubjectId={activeSubjectId}
+              setActiveSubjectId={setActiveSubjectId}
+              addSubject={addSubject}
+            />
           </Sidebar>
+          <SheetContent side="left" className="w-72 p-0 md:hidden">
+            <TrackerSidebarContent
+              subjects={subjects}
+              activeSubjectId={activeSubjectId}
+              setActiveSubjectId={setActiveSubjectId}
+              addSubject={addSubject}
+            />
+          </SheetContent>
+
           <Dashboard
-            key={activeSubjectId}
             subjects={subjects}
             activeSubject={activeSubject}
             tasks={tasks}
@@ -73,8 +67,6 @@ export function CodeTracker({
             onDeleteTask={deleteTask}
             onAddTopic={addTopic}
           />
-        </div>
-      </Sheet>
-    </SidebarProvider>
+      </div>
   );
 }

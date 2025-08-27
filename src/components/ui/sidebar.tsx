@@ -78,7 +78,9 @@ const SidebarProvider = React.forwardRef<
         }
 
         // This sets the cookie to keep the sidebar state.
-        document.cookie = `${SIDEBAR_COOKIE_NAME}=${openState}; path=/; max-age=${SIDEBAR_COOKIE_MAX_AGE}`
+        if (typeof document !== 'undefined') {
+          document.cookie = `${SIDEBAR_COOKIE_NAME}=${openState}; path=/; max-age=${SIDEBAR_COOKIE_MAX_AGE}`
+        }
       },
       [setOpenProp, open]
     )
@@ -157,7 +159,7 @@ const Sidebar = React.forwardRef<
     {
       side = "left",
       variant = "sidebar",
-      collapsible = "offcanvas",
+      collapsible = "icon",
       className,
       children,
       ...props
@@ -184,7 +186,7 @@ const Sidebar = React.forwardRef<
     return (
       <div
         ref={ref}
-        className="group peer hidden md:block text-sidebar-foreground"
+        className={cn("group text-sidebar-foreground", className)}
         data-state={state}
         data-collapsible={state === "collapsed" ? collapsible : ""}
         data-variant={variant}
@@ -194,7 +196,7 @@ const Sidebar = React.forwardRef<
         {/* This is what handles the sidebar gap on desktop */}
         <div
           className={cn(
-            "duration-200 relative h-svh w-[--sidebar-width] bg-transparent transition-[width] ease-linear",
+            "duration-200 relative hidden h-svh w-[--sidebar-width] bg-transparent transition-[width] ease-linear md:block",
             "group-data-[collapsible=offcanvas]:w-0",
             "group-data-[side=right]:rotate-180",
             variant === "floating" || variant === "inset"
@@ -211,8 +213,7 @@ const Sidebar = React.forwardRef<
             // Adjust the padding for floating and inset variants.
             variant === "floating" || variant === "inset"
               ? "p-2 group-data-[collapsible=icon]:w-[calc(var(--sidebar-width-icon)_+_theme(spacing.4)_+2px)]"
-              : "group-data-[collapsible=icon]:w-[--sidebar-width-icon] group-data-[side=left]:border-r group-data-[side=right]:border-l",
-            className
+              : "group-data-[collapsible=icon]:w-[--sidebar-width-icon] group-data-[side=left]:border-r group-data-[side=right]:border-l"
           )}
         >
           <div
@@ -235,13 +236,12 @@ const SidebarTrigger = React.forwardRef<
   const { toggleSidebar } = useSidebar()
 
   return (
-    <SheetPrimitiveTrigger asChild>
       <Button
         ref={ref}
         data-sidebar="trigger"
         variant="ghost"
         size="icon"
-        className={cn("h-9 w-9 md:inline-flex", className)}
+        className={cn("h-9 w-9 hidden md:inline-flex", className)}
         onClick={(event) => {
           onClick?.(event)
           toggleSidebar()
@@ -251,7 +251,6 @@ const SidebarTrigger = React.forwardRef<
         <PanelLeft />
         <span className="sr-only">Toggle Sidebar</span>
       </Button>
-    </SheetPrimitiveTrigger>
   )
 })
 SidebarTrigger.displayName = "SidebarTrigger"
@@ -294,7 +293,8 @@ const SidebarInset = React.forwardRef<
       ref={ref}
       className={cn(
         "relative flex min-h-svh flex-1 flex-col bg-background",
-        "peer-data-[variant=inset]:min-h-[calc(100svh-theme(spacing.4))] md:peer-data-[variant=inset]:m-2 md:peer-data-[state=collapsed]:peer-data-[variant=inset]:ml-2 md:peer-data-[variant=inset]:ml-0 md:peer-data-[variant=inset]:rounded-xl md:peer-data-[variant=inset]:shadow",
+        "md:peer-data-[variant=inset]:m-2 md:peer-data-[state=collapsed]:peer-data-[variant=inset]:ml-2 md:peer-data-[variant=inset]:ml-0 md:peer-data-[variant=inset]:rounded-xl md:peer-data-[variant=inset]:shadow",
+        "peer-data-[variant=inset]:min-h-[calc(100svh-theme(spacing.4))]",
         className
       )}
       {...props}
@@ -344,7 +344,7 @@ const SidebarFooter = React.forwardRef<
     <div
       ref={ref}
       data-sidebar="footer"
-      className={cn("flex flex-col gap-2 p-2", className)}
+      className={cn("flex flex-col gap-2 p-2 mt-auto", className)}
       {...props}
     />
   )

@@ -6,6 +6,8 @@ import { format } from 'date-fns';
 import { useLocalStorage } from '@/hooks/use-local-storage';
 import { CodeTracker } from './CodeTracker';
 import { useToast } from '@/hooks/use-toast';
+import { SidebarProvider } from './ui/sidebar';
+import { Sheet } from './ui/sheet';
 
 const initialSubjects: Subject[] = [
   // Web Development
@@ -492,19 +494,23 @@ export function CodeTrackerClient() {
   }
 
   return (
-    <CodeTracker
-      subjects={subjects}
-      activeSubject={activeSubject}
-      tasks={tasks}
-      selectedDate={selectedDate}
-      activeSubjectId={activeSubjectId}
-      setSelectedDate={setSelectedDate}
-      setActiveSubjectId={setActiveSubjectId}
-      addSubject={addSubject}
-      addTask={addTask}
-      toggleTask={toggleTask}
-      deleteTask={deleteTask}
-      addTopic={addTopic}
-    />
+    <SidebarProvider>
+      <Sheet>
+        <CodeTracker
+          subjects={subjects}
+          activeSubject={activeSubject}
+          tasks={tasks}
+          selectedDate={selectedDate}
+          activeSubjectId={activeSubjectId}
+          setSelectedDate={setSelectedDate}
+          setActiveSubjectId={setActiveSubjectId}
+          addSubject={addSubject}
+          addTask={addTask}
+          toggleTask={toggleTask}
+          deleteTask={deleteTask}
+          addTopic={addTopic}
+        />
+      </Sheet>
+    </SidebarProvider>
   );
 }

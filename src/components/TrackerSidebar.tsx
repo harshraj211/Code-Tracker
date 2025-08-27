@@ -2,9 +2,8 @@
 
 import React, { useState } from 'react';
 import {
-  Sidebar,
+  SidebarContent as SidebarMainContent,
   SidebarHeader,
-  SidebarContent,
   SidebarMenu,
   SidebarMenuItem,
   SidebarMenuButton,
@@ -18,12 +17,11 @@ import { Label } from '@/components/ui/label';
 import type { Subject } from '@/lib/types';
 import { PlusCircle, Code } from 'lucide-react';
 
-interface TrackerSidebarProps {
+interface TrackerSidebarContentProps {
   subjects: Subject[];
   activeSubjectId: string | null;
   setActiveSubjectId: (id: string | null) => void;
   addSubject: (name: string) => void;
-  isMobile: boolean;
 }
 
 export function TrackerSidebarContent({
@@ -31,7 +29,7 @@ export function TrackerSidebarContent({
   activeSubjectId,
   setActiveSubjectId,
   addSubject,
-}: Omit<TrackerSidebarProps, 'isMobile'>) {
+}: TrackerSidebarContentProps) {
   const [newSubjectName, setNewSubjectName] = useState('');
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
@@ -66,8 +64,8 @@ export function TrackerSidebarContent({
           <h1 className="text-xl font-semibold">CodeTracker</h1>
         </div>
       </SidebarHeader>
-      <SidebarContent>
-          <SidebarMenu>
+      <SidebarMainContent className="p-0">
+          <SidebarMenu className="p-2">
             {subjects.map((subject, index) =>
               subject.isCategory ? (
                 <React.Fragment key={subject.id}>
@@ -90,7 +88,7 @@ export function TrackerSidebarContent({
               )
             )}
           </SidebarMenu>
-      </SidebarContent>
+      </SidebarMainContent>
       <SidebarFooter>
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
           <DialogTrigger asChild>
@@ -124,18 +122,5 @@ export function TrackerSidebarContent({
         </Dialog>
       </SidebarFooter>
     </>
-  );
-}
-
-
-export function TrackerSidebar(props: TrackerSidebarProps) {
-  if (props.isMobile) {
-    return <TrackerSidebarContent {...props} />;
-  }
-
-  return (
-    <Sidebar>
-       <TrackerSidebarContent {...props} />
-    </Sidebar>
   );
 }
