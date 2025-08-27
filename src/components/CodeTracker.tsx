@@ -1,4 +1,3 @@
-
 "use client";
 
 import React, { useState, useMemo, useEffect } from 'react';
@@ -379,12 +378,6 @@ export function CodeTracker() {
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const isMobile = useIsMobile();
   
-  useEffect(() => {
-    if (activeSubjectId === null && !isMobile) {
-      // setActiveSubjectId('html'); // Let's not default to html anymore
-    }
-  }, [isMobile, activeSubjectId]);
-
   useEffect(() => {
     // On mobile, if a subject is active, we want to set it to null so the user has to re-select
     // which also causes the sidebar to close automatically. This is a bit of a hacky way to close the sidebar.
