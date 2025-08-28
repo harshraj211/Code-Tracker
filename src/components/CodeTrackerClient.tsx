@@ -381,9 +381,11 @@ export function CodeTrackerClient() {
   
   useEffect(() => {
     setIsClient(true);
+    // Onboarding logic can be simplified or removed if not strictly needed.
+    // For now, we ensure a subject is always active.
     const hasBeenOnboarded = localStorage.getItem('onboarded');
     if (!hasBeenOnboarded) {
-      setActiveSubjectId(null);
+      setActiveSubjectId('html');
       localStorage.setItem('onboarded', 'true');
     }
   }, []);
@@ -495,22 +497,20 @@ export function CodeTrackerClient() {
 
   return (
     <SidebarProvider>
-      <Sheet>
-        <CodeTracker
-          subjects={subjects}
-          activeSubject={activeSubject}
-          tasks={tasks}
-          selectedDate={selectedDate}
-          activeSubjectId={activeSubjectId}
-          setSelectedDate={setSelectedDate}
-          setActiveSubjectId={setActiveSubjectId}
-          addSubject={addSubject}
-          addTask={addTask}
-          toggleTask={toggleTask}
-          deleteTask={deleteTask}
-          addTopic={addTopic}
-        />
-      </Sheet>
+      <CodeTracker
+        subjects={subjects}
+        activeSubject={activeSubject}
+        tasks={tasks}
+        selectedDate={selectedDate}
+        activeSubjectId={activeSubjectId}
+        setSelectedDate={setSelectedDate}
+        setActiveSubjectId={setActiveSubjectId}
+        addSubject={addSubject}
+        addTask={addTask}
+        toggleTask={toggleTask}
+        deleteTask={deleteTask}
+        addTopic={addTopic}
+      />
     </SidebarProvider>
   );
 }
